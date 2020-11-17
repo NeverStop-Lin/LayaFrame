@@ -18,7 +18,7 @@
             "x":15,
             "type":"Image",
             "searchKey":"Image",
-            "props":{"y":501,"x":119,"skin":"comp/image.png"},
+            "props":{"y":452,"x":55,"skin":"comp/image.png"},
             "nodeParent":2,
             "label":"Image",
             "isDirectory":false,

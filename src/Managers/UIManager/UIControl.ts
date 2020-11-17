@@ -1,8 +1,3 @@
-import { ui } from "../../ui/layaMaxUI";
-
-
-
-
 class _UIManager {
     /** 场景中的页面列表 */
     private Views: Laya.Scene[] = [];

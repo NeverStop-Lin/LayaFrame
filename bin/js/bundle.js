@@ -28,6 +28,52 @@
     (function (ui) {
         var Views;
         (function (Views) {
+            var test;
+            (function (test) {
+                class page2UI extends View {
+                    constructor() { super(); }
+                    createChildren() {
+                        super.createChildren();
+                        this.loadScene("Views/test/page2");
+                    }
+                }
+                test.page2UI = page2UI;
+                REG("ui.Views.test.page2UI", page2UI);
+                class testUI extends View {
+                    constructor() { super(); }
+                    createChildren() {
+                        super.createChildren();
+                        this.loadScene("Views/test/test");
+                    }
+                }
+                test.testUI = testUI;
+                REG("ui.Views.test.testUI", testUI);
+            })(test = Views.test || (Views.test = {}));
+        })(Views = ui.Views || (ui.Views = {}));
+    })(ui || (ui = {}));
+    (function (ui) {
+        var Views;
+        (function (Views) {
+            var test;
+            (function (test) {
+                var test2;
+                (function (test2) {
+                    class pages3UI extends View {
+                        constructor() { super(); }
+                        createChildren() {
+                            super.createChildren();
+                            this.loadScene("Views/test/test2/pages3");
+                        }
+                    }
+                    test2.pages3UI = pages3UI;
+                    REG("ui.Views.test.test2.pages3UI", pages3UI);
+                })(test2 = test.test2 || (test.test2 = {}));
+            })(test = Views.test || (Views.test = {}));
+        })(Views = ui.Views || (ui.Views = {}));
+    })(ui || (ui = {}));
+    (function (ui) {
+        var Views;
+        (function (Views) {
             class View_LoadingUI extends View {
                 constructor() { super(); }
                 createChildren() {
@@ -42,12 +88,16 @@
 
     class LoadingView extends ui.Views.View_LoadingUI {
         onAwake() {
+            console.log(...JSON.parse('[]'));
         }
     }
     LoadingView.NAME = "View_Loading";
 
-    class UIManager {
-        static ShowUI(_class) {
+    class _UIManager {
+        constructor() {
+            this.Views = [];
+        }
+        ShowUI(_class) {
             let _index = UIManager.GetUIIndexFromViews(_class.NAME);
             let _view = UIManager.Views[_index];
             if (!_view) {
@@ -60,7 +110,7 @@
             _view.active = true;
             return _view;
         }
-        static HideUI(_class) {
+        HideUI(_class) {
             let _index = UIManager.GetUIIndexFromViews(_class.NAME);
             let _view = UIManager.Views[_index];
             if (_view) {
@@ -69,7 +119,7 @@
                 _view.active = false;
             }
         }
-        static RemoveUI(_class) {
+        RemoveUI(_class) {
             let _index = UIManager.GetUIIndexFromViews(_class.NAME);
             let _view = UIManager.Views[_index];
             if (_view) {
@@ -80,13 +130,13 @@
                 });
             }
         }
-        static GetUIIndexFromViews(_names) {
+        GetUIIndexFromViews(_names) {
             return UIManager.Views.findIndex(_ui => {
                 return _ui.name == _names;
             });
         }
     }
-    UIManager.Views = [];
+    const UIManager = new _UIManager();
 
     class Main {
         constructor() {

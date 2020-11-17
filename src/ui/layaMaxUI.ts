@@ -3,6 +3,34 @@ import View=Laya.View;
 import Dialog=Laya.Dialog;
 import Scene=Laya.Scene;
 var REG: Function = Laya.ClassUtils.regClass;
+export module ui.Views.test {
+    export class page2UI extends View {
+        constructor(){ super()}
+        createChildren():void {
+            super.createChildren();
+            this.loadScene("Views/test/page2");
+        }
+    }
+    REG("ui.Views.test.page2UI",page2UI);
+    export class testUI extends View {
+        constructor(){ super()}
+        createChildren():void {
+            super.createChildren();
+            this.loadScene("Views/test/test");
+        }
+    }
+    REG("ui.Views.test.testUI",testUI);
+}
+export module ui.Views.test.test2 {
+    export class pages3UI extends View {
+        constructor(){ super()}
+        createChildren():void {
+            super.createChildren();
+            this.loadScene("Views/test/test2/pages3");
+        }
+    }
+    REG("ui.Views.test.test2.pages3UI",pages3UI);
+}
 export module ui.Views {
     export class View_LoadingUI extends View {
         constructor(){ super()}
