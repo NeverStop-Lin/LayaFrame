@@ -24,11 +24,11 @@
     createViewScript()
     /** 根据bin/Views/目录下的界面json文件 创建对应的界面class在src/Views/ */
     function createViewScript() {
-        //获取所有json相对路径
+        //获取所有json路径
         let jsonPath = getFilePath(binPath + "\\Views")
-        //获取所有界面class文件相对路径
+        //获取所有界面class文件路径
         let classPath = getFilePath(srcPath + "\\Views")
-        //需要创建的class文件绝对路径
+        //需要创建的class文件路径
         let needClassPath = []
         // 比较缺少哪些界面class 获取所要创建文件的路径数组
         jsonPath.relative.forEach(json_path => {
@@ -54,15 +54,40 @@ export default class ${class_name} extends ${class_path} {
 }`
 
             mkdirsSync(srcPath + "\\Views\\" + pathDir.dir) //创建目录
-            FS.appendFileSync(item.absolute.replace(".json", ".ts"), data) //创建文件
+            FS.writeFileSync(item.absolute.replace(".json", ".ts"), data) //创建文件
         })
     }
 
-    // /** 根据bin */
-    // function subpackage
 
+    subpackageDir()
+    /** 根据bin/game.json分包配置，创建相应目录及game.js */
+    function subpackageDir() {
+        let content = FS.readFileSync(binPath + "\\game.json", "utf-8")
+        content = JSON.parse(content)
+        if (typeof content.subpackages == "undefined") {
+            content.subpackages = []
+            content = JSON.stringify(content)
+            FS.writeFileSync(binPath + "\\game.json", content)
+        } else {
+            content = content.subpackages
+        }
+        content = content.map((item) => {
+            item.path = binPath + "\\" + item.root.replace(/\//g, "\\")
 
+            //创建game.js
+            try {
+                FS.accessSync(item.path + "\\game.js");
+            } catch (error) {
+                FS.writeFileSync(item.path + "\\game.js", "")
+            }
+            return {
+                item
+            }
 
+        })
+        log(content)
+
+    }
     //==================================================
 
     /** 递归获取目录下所有文件的绝对路径和相对路径 */
@@ -106,17 +131,18 @@ export default class ${class_name} extends ${class_path} {
             }
         }
     }
+
     //==================================================
     /** 输出到控制台,用于调试 */
     function log(val) {
         texts.push(val)
     }
     FS.writeFileSync(srcPath + "\\Views\\View_loading.ts", `import { ui } from "../ui/layaMaxUI";
-        export default class LoadingView extends ui.Views.View_LoadingUI {
-            static NAME = "View_Loading"; //UI控制类需要使用,勿删。
-            onAwake() {
-                console.log(...JSON.parse('${JSON.stringify(texts)}'))
-            }
-        }`)
+export default class LoadingView extends ui.Views.View_LoadingUI {
+    static NAME = "View_Loading"; //UI控制类需要使用,勿删。
+    onAwake() {
+        console.log(...JSON.parse('${JSON.stringify(texts)}'))
+    }
+}`)
 
 }());
