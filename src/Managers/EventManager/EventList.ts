@@ -1,5 +1,6 @@
 /** 注册事件 */
-export default class GameNotify
-{
-    static Test:string = "Test";
+class _EventList {
+    public Test: string = "Test";
 }
+const EventList = new _EventList()
+export default EventList
