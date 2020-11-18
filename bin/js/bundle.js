@@ -22,76 +22,6 @@
     GameConfig.exportSceneToJson = true;
     GameConfig.init();
 
-    var View = Laya.View;
-    var REG = Laya.ClassUtils.regClass;
-    var ui;
-    (function (ui) {
-        var Views;
-        (function (Views) {
-            class View_LoadingUI extends View {
-                constructor() { super(); }
-                createChildren() {
-                    super.createChildren();
-                    this.loadScene("Views/View_Loading");
-                }
-            }
-            Views.View_LoadingUI = View_LoadingUI;
-            REG("ui.Views.View_LoadingUI", View_LoadingUI);
-        })(Views = ui.Views || (ui.Views = {}));
-    })(ui || (ui = {}));
-
-    class LoadingView extends ui.Views.View_LoadingUI {
-        onAwake() {
-            console.log(...JSON.parse('[[]]'));
-        }
-    }
-    LoadingView.NAME = "View_Loading";
-
-    class _UIManager {
-        constructor() {
-            this.Views = [];
-        }
-        ShowUI(_class) {
-            let _index = UIManager.GetUIIndexFromViews(_class.NAME);
-            let _view = UIManager.Views[_index];
-            if (!_view) {
-                _view = new _class();
-                UIManager.Views.push(_view);
-            }
-            _view.name = _class.NAME;
-            Laya.stage.addChild(_view);
-            _view.visible = true;
-            _view.active = true;
-            return _view;
-        }
-        HideUI(_class) {
-            let _index = UIManager.GetUIIndexFromViews(_class.NAME);
-            let _view = UIManager.Views[_index];
-            if (_view) {
-                Laya.stage.removeChild(_view);
-                _view.visible = false;
-                _view.active = false;
-            }
-        }
-        RemoveUI(_class) {
-            let _index = UIManager.GetUIIndexFromViews(_class.NAME);
-            let _view = UIManager.Views[_index];
-            if (_view) {
-                UIManager.Views.splice(_index, 1);
-                Laya.stage.removeChild(_view);
-                Laya.timer.frameOnce(3, null, () => {
-                    _view.destroy();
-                });
-            }
-        }
-        GetUIIndexFromViews(_names) {
-            return UIManager.Views.findIndex(_ui => {
-                return _ui.name == _names;
-            });
-        }
-    }
-    const UIManager = new _UIManager();
-
     class Main {
         constructor() {
             if (window["Laya3D"])
@@ -118,7 +48,6 @@
             Laya.AtlasInfoManager.enable("fileconfig.json", Laya.Handler.create(this, this.onConfigLoaded));
         }
         onConfigLoaded() {
-            UIManager.ShowUI(LoadingView);
         }
     }
     new Main();

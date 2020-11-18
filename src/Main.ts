@@ -1,6 +1,6 @@
 import GameConfig from "./GameConfig";
-import View_Loading from "./Views/View_Loading";
 import UIManager from "./Managers/UIManager/UIControl";
+import View_Loading from "./Views/View_Loading";
 class Main {
 	constructor() {
 		//根据IDE设置初始化引擎		
