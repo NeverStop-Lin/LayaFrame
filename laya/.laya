@@ -1,8 +1,8 @@
 <project version="2.0">
-   <asynRes>img,temp,sound                                    </asynRes>
-   <unDealRes>embed                                    </unDealRes>
+   <asynRes>img,temp,sound                                                                  </asynRes>
+   <unDealRes>embed                                                                  </unDealRes>
    <resTypes>png,jpg   </resTypes>
-   <resExportPath>bin/res/images/atlas   </resExportPath>
+   <resExportPath>bin/res/images   </resExportPath>
    <asynResExportPath>bin   </asynResExportPath>
    <codeExportPath>src/ui   </codeExportPath>
    <codeImports><![CDATA[import laya.ui.*;]]>   </codeImports>
@@ -15,7 +15,7 @@ var Dialog=laya.ui.Dialog;]]>   </codeImportsJS>
    <shareResPath/>
    <codeType>1   </codeType>
    <resCanCompress/>
-   <resPublishQuality>80                                    </resPublishQuality>
+   <resPublishQuality>80                                                                  </resPublishQuality>
    <langPath/>
    <defaultFont>24px Arial   </defaultFont>
    <codeImportsTS><![CDATA[import View=Laya.View;
@@ -27,17 +27,17 @@ import Scene=Laya.Scene;]]>   </codeImportsTS>
    <picHeight>256   </picHeight>
    <power2>false   </power2>
    <trimempty>false   </trimempty>
-   <startScene>Views/View_Loading.scene   </startScene>
+   <startScene/>
    <engineType>2D   </engineType>
-   <scaleMode>fixedwidth   </scaleMode>
-   <screenMode>vertical   </screenMode>
+   <scaleMode>fixedheight   </scaleMode>
+   <screenMode>horizontal   </screenMode>
    <alignV>middle   </alignV>
    <alignH>center   </alignH>
-   <designWidth>750   </designWidth>
-   <designHeight>1334   </designHeight>
+   <designWidth>1334   </designWidth>
+   <designHeight>750   </designHeight>
    <codeViewExportPath>src/view   </codeViewExportPath>
    <picType>0   </picType>
-   <atlasType/>
+   <atlasType>1   </atlasType>
    <atlasScale>1   </atlasScale>
    <debugMode>false   </debugMode>
    <copyRes>true   </copyRes>

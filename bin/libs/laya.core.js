@@ -1428,7 +1428,6 @@ window.Laya= (function (exports) {
         TextureFormat[TextureFormat["PVRTCRGB_4BPPV"] = 11] = "PVRTCRGB_4BPPV";
         TextureFormat[TextureFormat["PVRTCRGBA_4BPPV"] = 12] = "PVRTCRGBA_4BPPV";
         TextureFormat[TextureFormat["R32G32B32A32"] = 15] = "R32G32B32A32";
-        TextureFormat[TextureFormat["R16G16B16A16"] = 16] = "R16G16B16A16";
     })(exports.TextureFormat || (exports.TextureFormat = {}));
 
     (function (WarpMode) {
@@ -1533,7 +1532,6 @@ window.Laya= (function (exports) {
                     glFormat = gl.ALPHA;
                     break;
                 case exports.TextureFormat.R32G32B32A32:
-                case exports.TextureFormat.R16G16B16A16:
                     glFormat = gl.RGBA;
                     break;
                 case exports.TextureFormat.DXT1:
@@ -1680,410 +1678,6 @@ window.Laya= (function (exports) {
     BaseTexture.WARPMODE_REPEAT = 0;
     BaseTexture.WARPMODE_CLAMP = 1;
 
-    class Byte {
-        constructor(data = null) {
-            this._xd_ = true;
-            this._allocated_ = 8;
-            this._pos_ = 0;
-            this._length = 0;
-            if (data) {
-                this._u8d_ = new Uint8Array(data);
-                this._d_ = new DataView(this._u8d_.buffer);
-                this._length = this._d_.byteLength;
-            }
-            else {
-                this._resizeBuffer(this._allocated_);
-            }
-        }
-        static getSystemEndian() {
-            if (!Byte._sysEndian) {
-                var buffer = new ArrayBuffer(2);
-                new DataView(buffer).setInt16(0, 256, true);
-                Byte._sysEndian = (new Int16Array(buffer))[0] === 256 ? Byte.LITTLE_ENDIAN : Byte.BIG_ENDIAN;
-            }
-            return Byte._sysEndian;
-        }
-        get buffer() {
-            var rstBuffer = this._d_.buffer;
-            if (rstBuffer.byteLength === this._length)
-                return rstBuffer;
-            return rstBuffer.slice(0, this._length);
-        }
-        get endian() {
-            return this._xd_ ? Byte.LITTLE_ENDIAN : Byte.BIG_ENDIAN;
-        }
-        set endian(value) {
-            this._xd_ = (value === Byte.LITTLE_ENDIAN);
-        }
-        set length(value) {
-            if (this._allocated_ < value)
-                this._resizeBuffer(this._allocated_ = Math.floor(Math.max(value, this._allocated_ * 2)));
-            else if (this._allocated_ > value)
-                this._resizeBuffer(this._allocated_ = value);
-            this._length = value;
-        }
-        get length() {
-            return this._length;
-        }
-        _resizeBuffer(len) {
-            try {
-                var newByteView = new Uint8Array(len);
-                if (this._u8d_ != null) {
-                    if (this._u8d_.length <= len)
-                        newByteView.set(this._u8d_);
-                    else
-                        newByteView.set(this._u8d_.subarray(0, len));
-                }
-                this._u8d_ = newByteView;
-                this._d_ = new DataView(newByteView.buffer);
-            }
-            catch (err) {
-                throw "Invalid typed array length:" + len;
-            }
-        }
-        getString() {
-            return this.readString();
-        }
-        readString() {
-            return this._rUTF(this.getUint16());
-        }
-        getFloat32Array(start, len) {
-            return this.readFloat32Array(start, len);
-        }
-        readFloat32Array(start, len) {
-            var end = start + len;
-            end = (end > this._length) ? this._length : end;
-            var v = new Float32Array(this._d_.buffer.slice(start, end));
-            this._pos_ = end;
-            return v;
-        }
-        getUint8Array(start, len) {
-            return this.readUint8Array(start, len);
-        }
-        readUint8Array(start, len) {
-            var end = start + len;
-            end = (end > this._length) ? this._length : end;
-            var v = new Uint8Array(this._d_.buffer.slice(start, end));
-            this._pos_ = end;
-            return v;
-        }
-        getInt16Array(start, len) {
-            return this.readInt16Array(start, len);
-        }
-        readInt16Array(start, len) {
-            var end = start + len;
-            end = (end > this._length) ? this._length : end;
-            var v = new Int16Array(this._d_.buffer.slice(start, end));
-            this._pos_ = end;
-            return v;
-        }
-        getFloat32() {
-            return this.readFloat32();
-        }
-        readFloat32() {
-            if (this._pos_ + 4 > this._length)
-                throw "getFloat32 error - Out of bounds";
-            var v = this._d_.getFloat32(this._pos_, this._xd_);
-            this._pos_ += 4;
-            return v;
-        }
-        getFloat64() {
-            return this.readFloat64();
-        }
-        readFloat64() {
-            if (this._pos_ + 8 > this._length)
-                throw "getFloat64 error - Out of bounds";
-            var v = this._d_.getFloat64(this._pos_, this._xd_);
-            this._pos_ += 8;
-            return v;
-        }
-        writeFloat32(value) {
-            this._ensureWrite(this._pos_ + 4);
-            this._d_.setFloat32(this._pos_, value, this._xd_);
-            this._pos_ += 4;
-        }
-        writeFloat64(value) {
-            this._ensureWrite(this._pos_ + 8);
-            this._d_.setFloat64(this._pos_, value, this._xd_);
-            this._pos_ += 8;
-        }
-        getInt32() {
-            return this.readInt32();
-        }
-        readInt32() {
-            if (this._pos_ + 4 > this._length)
-                throw "getInt32 error - Out of bounds";
-            var float = this._d_.getInt32(this._pos_, this._xd_);
-            this._pos_ += 4;
-            return float;
-        }
-        getUint32() {
-            return this.readUint32();
-        }
-        readUint32() {
-            if (this._pos_ + 4 > this._length)
-                throw "getUint32 error - Out of bounds";
-            var v = this._d_.getUint32(this._pos_, this._xd_);
-            this._pos_ += 4;
-            return v;
-        }
-        writeInt32(value) {
-            this._ensureWrite(this._pos_ + 4);
-            this._d_.setInt32(this._pos_, value, this._xd_);
-            this._pos_ += 4;
-        }
-        writeUint32(value) {
-            this._ensureWrite(this._pos_ + 4);
-            this._d_.setUint32(this._pos_, value, this._xd_);
-            this._pos_ += 4;
-        }
-        getInt16() {
-            return this.readInt16();
-        }
-        readInt16() {
-            if (this._pos_ + 2 > this._length)
-                throw "getInt16 error - Out of bounds";
-            var us = this._d_.getInt16(this._pos_, this._xd_);
-            this._pos_ += 2;
-            return us;
-        }
-        getUint16() {
-            return this.readUint16();
-        }
-        readUint16() {
-            if (this._pos_ + 2 > this._length)
-                throw "getUint16 error - Out of bounds";
-            var us = this._d_.getUint16(this._pos_, this._xd_);
-            this._pos_ += 2;
-            return us;
-        }
-        writeUint16(value) {
-            this._ensureWrite(this._pos_ + 2);
-            this._d_.setUint16(this._pos_, value, this._xd_);
-            this._pos_ += 2;
-        }
-        writeInt16(value) {
-            this._ensureWrite(this._pos_ + 2);
-            this._d_.setInt16(this._pos_, value, this._xd_);
-            this._pos_ += 2;
-        }
-        getUint8() {
-            return this.readUint8();
-        }
-        readUint8() {
-            if (this._pos_ + 1 > this._length)
-                throw "getUint8 error - Out of bounds";
-            return this._u8d_[this._pos_++];
-        }
-        writeUint8(value) {
-            this._ensureWrite(this._pos_ + 1);
-            this._d_.setUint8(this._pos_, value);
-            this._pos_++;
-        }
-        _getUInt8(pos) {
-            return this._readUInt8(pos);
-        }
-        _readUInt8(pos) {
-            return this._d_.getUint8(pos);
-        }
-        _getUint16(pos) {
-            return this._readUint16(pos);
-        }
-        _readUint16(pos) {
-            return this._d_.getUint16(pos, this._xd_);
-        }
-        _getMatrix() {
-            return this._readMatrix();
-        }
-        _readMatrix() {
-            var rst = new Matrix(this.getFloat32(), this.getFloat32(), this.getFloat32(), this.getFloat32(), this.getFloat32(), this.getFloat32());
-            return rst;
-        }
-        _rUTF(len) {
-            var max = this._pos_ + len, c, c2, c3, f = String.fromCharCode;
-            var u = this._u8d_;
-            var strs = [];
-            var n = 0;
-            strs.length = 1000;
-            while (this._pos_ < max) {
-                c = u[this._pos_++];
-                if (c < 0x80) {
-                    if (c != 0)
-                        strs[n++] = f(c);
-                }
-                else if (c < 0xE0) {
-                    strs[n++] = f(((c & 0x3F) << 6) | (u[this._pos_++] & 0x7F));
-                }
-                else if (c < 0xF0) {
-                    c2 = u[this._pos_++];
-                    strs[n++] = f(((c & 0x1F) << 12) | ((c2 & 0x7F) << 6) | (u[this._pos_++] & 0x7F));
-                }
-                else {
-                    c2 = u[this._pos_++];
-                    c3 = u[this._pos_++];
-                    const _code = ((c & 0x0F) << 18) | ((c2 & 0x7F) << 12) | ((c3 & 0x7F) << 6) | (u[this._pos_++] & 0x7F);
-                    if (_code >= 0x10000) {
-                        const _offset = _code - 0x10000;
-                        const _lead = 0xd800 | (_offset >> 10);
-                        const _trail = 0xdc00 | (_offset & 0x3ff);
-                        strs[n++] = f(_lead);
-                        strs[n++] = f(_trail);
-                    }
-                    else {
-                        strs[n++] = f(_code);
-                    }
-                }
-            }
-            strs.length = n;
-            return strs.join('');
-        }
-        getCustomString(len) {
-            return this.readCustomString(len);
-        }
-        readCustomString(len) {
-            var v = "", ulen = 0, c, c2, f = String.fromCharCode;
-            var u = this._u8d_;
-            while (len > 0) {
-                c = u[this._pos_];
-                if (c < 0x80) {
-                    v += f(c);
-                    this._pos_++;
-                    len--;
-                }
-                else {
-                    ulen = c - 0x80;
-                    this._pos_++;
-                    len -= ulen;
-                    while (ulen > 0) {
-                        c = u[this._pos_++];
-                        c2 = u[this._pos_++];
-                        v += f((c2 << 8) | c);
-                        ulen--;
-                    }
-                }
-            }
-            return v;
-        }
-        get pos() {
-            return this._pos_;
-        }
-        set pos(value) {
-            this._pos_ = value;
-        }
-        get bytesAvailable() {
-            return this._length - this._pos_;
-        }
-        clear() {
-            this._pos_ = 0;
-            this.length = 0;
-        }
-        __getBuffer() {
-            return this._d_.buffer;
-        }
-        writeUTFBytes(value) {
-            value = value + "";
-            for (var i = 0, sz = value.length; i < sz; i++) {
-                var c = value.charCodeAt(i);
-                if (c <= 0x7F) {
-                    this.writeByte(c);
-                }
-                else if (c <= 0x7FF) {
-                    this._ensureWrite(this._pos_ + 2);
-                    this._u8d_.set([0xC0 | (c >> 6), 0x80 | (c & 0x3F)], this._pos_);
-                    this._pos_ += 2;
-                }
-                else if (c >= 0xD800 && c <= 0xDBFF) {
-                    i++;
-                    const c2 = value.charCodeAt(i);
-                    if (!Number.isNaN(c2) && c2 >= 0xDC00 && c2 <= 0xDFFF) {
-                        const _p1 = (c & 0x3FF) + 0x40;
-                        const _p2 = c2 & 0x3FF;
-                        const _b1 = 0xF0 | ((_p1 >> 8) & 0x3F);
-                        const _b2 = 0x80 | ((_p1 >> 2) & 0x3F);
-                        const _b3 = 0x80 | ((_p1 & 0x3) << 4) | ((_p2 >> 6) & 0xF);
-                        const _b4 = 0x80 | (_p2 & 0x3F);
-                        this._ensureWrite(this._pos_ + 4);
-                        this._u8d_.set([_b1, _b2, _b3, _b4], this._pos_);
-                        this._pos_ += 4;
-                    }
-                }
-                else if (c <= 0xFFFF) {
-                    this._ensureWrite(this._pos_ + 3);
-                    this._u8d_.set([0xE0 | (c >> 12), 0x80 | ((c >> 6) & 0x3F), 0x80 | (c & 0x3F)], this._pos_);
-                    this._pos_ += 3;
-                }
-                else {
-                    this._ensureWrite(this._pos_ + 4);
-                    this._u8d_.set([0xF0 | (c >> 18), 0x80 | ((c >> 12) & 0x3F), 0x80 | ((c >> 6) & 0x3F), 0x80 | (c & 0x3F)], this._pos_);
-                    this._pos_ += 4;
-                }
-            }
-        }
-        writeUTFString(value) {
-            var tPos = this.pos;
-            this.writeUint16(1);
-            this.writeUTFBytes(value);
-            var dPos = this.pos - tPos - 2;
-            this._d_.setUint16(tPos, dPos, this._xd_);
-        }
-        readUTFString() {
-            return this.readUTFBytes(this.getUint16());
-        }
-        getUTFString() {
-            return this.readUTFString();
-        }
-        readUTFBytes(len = -1) {
-            if (len === 0)
-                return "";
-            var lastBytes = this.bytesAvailable;
-            if (len > lastBytes)
-                throw "readUTFBytes error - Out of bounds";
-            len = len > 0 ? len : lastBytes;
-            return this._rUTF(len);
-        }
-        getUTFBytes(len = -1) {
-            return this.readUTFBytes(len);
-        }
-        writeByte(value) {
-            this._ensureWrite(this._pos_ + 1);
-            this._d_.setInt8(this._pos_, value);
-            this._pos_ += 1;
-        }
-        readByte() {
-            if (this._pos_ + 1 > this._length)
-                throw "readByte error - Out of bounds";
-            return this._d_.getInt8(this._pos_++);
-        }
-        getByte() {
-            return this.readByte();
-        }
-        _ensureWrite(lengthToEnsure) {
-            if (this._length < lengthToEnsure)
-                this._length = lengthToEnsure;
-            if (this._allocated_ < lengthToEnsure)
-                this.length = lengthToEnsure;
-        }
-        writeArrayBuffer(arraybuffer, offset = 0, length = 0) {
-            if (offset < 0 || length < 0)
-                throw "writeArrayBuffer error - Out of bounds";
-            if (length == 0)
-                length = arraybuffer.byteLength - offset;
-            this._ensureWrite(this._pos_ + length);
-            var uint8array = new Uint8Array(arraybuffer);
-            this._u8d_.set(uint8array.subarray(offset, offset + length), this._pos_);
-            this._pos_ += length;
-        }
-        readArrayBuffer(length) {
-            var rst;
-            rst = this._u8d_.buffer.slice(this._pos_, this._pos_ + length);
-            this._pos_ = this._pos_ + length;
-            return rst;
-        }
-    }
-    Byte.BIG_ENDIAN = "bigEndian";
-    Byte.LITTLE_ENDIAN = "littleEndian";
-    Byte._sysEndian = null;
-
     class Texture2D extends BaseTexture {
         constructor(width = 0, height = 0, format = exports.TextureFormat.R8G8B8A8, mipmap = true, canRead = false) {
             super(format, mipmap);
@@ -2161,21 +1755,6 @@ window.Laya= (function (exports) {
             }
             return texture;
         }
-        static _SimpleAnimatorTextureParse(data, propertyParams = null, constructParams = null) {
-            var byte = new Byte(data);
-            var version = byte.readUTFString();
-            if (version != "LAYAANIMATORTEXTURE:0000")
-                throw "Laya3D:unknow version.";
-            var textureWidth = byte.readInt32();
-            var pixelDataLength = byte.readInt32();
-            var pixelDataArrays = new Float32Array(textureWidth * textureWidth * 4);
-            var usePixelData = new Float32Array(byte.readArrayBuffer(pixelDataLength * 4));
-            pixelDataArrays.set(usePixelData, 0);
-            var texture = new Texture2D(textureWidth, textureWidth, exports.TextureFormat.R32G32B32A32, false, false);
-            texture.setPixels(pixelDataArrays, 0);
-            texture.filterMode = exports.FilterMode.Point;
-            return texture;
-        }
         static load(url, complete) {
             ILaya.loader.create(url, complete, null, ILaya.Loader.TEXTURE2D);
         }
@@ -2210,11 +1789,6 @@ window.Laya= (function (exports) {
                     else
                         gl.texImage2D(textureType, miplevel, gl.RGBA, width, height, 0, glFormat, gl.FLOAT, pixels);
                     break;
-                case exports.TextureFormat.R16G16B16A16:
-                    if (LayaGL.layaGPUInstance._isWebGL2)
-                        gl.texImage2D(textureType, miplevel, gl.RGBA16F, width, height, 0, glFormat, gl.HALF_FLOAT, pixels);
-                    else
-                        gl.texImage2D(textureType, miplevel, gl.RGBA16F, width, height, 0, glFormat, LayaGL.layaGPUInstance._oesTextureHalfFloat.HALF_FLOAT_OES, pixels);
                 default:
                     gl.texImage2D(textureType, miplevel, glFormat, width, height, 0, glFormat, gl.UNSIGNED_BYTE, pixels);
             }
@@ -2779,37 +2353,14 @@ window.Laya= (function (exports) {
 
     class BlendMode {
         static _init_(gl) {
-            BlendMode.fns = [
-                BlendMode.BlendNormal,
-                BlendMode.BlendAdd,
-                BlendMode.BlendMultiply,
-                BlendMode.BlendScreen,
-                BlendMode.BlendOverlay,
-                BlendMode.BlendLight,
-                BlendMode.BlendMask,
-                BlendMode.BlendDestinationOut,
-                BlendMode.BlendAddOld
-            ];
-            BlendMode.targetFns = [
-                BlendMode.BlendNormalTarget,
-                BlendMode.BlendAddTarget,
-                BlendMode.BlendMultiplyTarget,
-                BlendMode.BlendScreenTarget,
-                BlendMode.BlendOverlayTarget,
-                BlendMode.BlendLightTarget,
-                BlendMode.BlendMask,
-                BlendMode.BlendDestinationOut,
-                BlendMode.BlendAddTargetOld
-            ];
+            BlendMode.fns = [BlendMode.BlendNormal, BlendMode.BlendAdd, BlendMode.BlendMultiply, BlendMode.BlendScreen, BlendMode.BlendOverlay, BlendMode.BlendLight, BlendMode.BlendMask, BlendMode.BlendDestinationOut];
+            BlendMode.targetFns = [BlendMode.BlendNormalTarget, BlendMode.BlendAddTarget, BlendMode.BlendMultiplyTarget, BlendMode.BlendScreenTarget, BlendMode.BlendOverlayTarget, BlendMode.BlendLightTarget, BlendMode.BlendMask, BlendMode.BlendDestinationOut];
         }
         static BlendNormal(gl) {
             WebGLContext.setBlendFunc(gl, gl.ONE, gl.ONE_MINUS_SRC_ALPHA, true);
         }
-        static BlendAddOld(gl) {
-            WebGLContext.setBlendFunc(gl, gl.ONE, gl.DST_ALPHA, true);
-        }
         static BlendAdd(gl) {
-            WebGLContext.setBlendFunc(gl, gl.ONE, gl.ONE, true);
+            WebGLContext.setBlendFunc(gl, gl.ONE, gl.DST_ALPHA, true);
         }
         static BlendMultiply(gl) {
             WebGLContext.setBlendFunc(gl, gl.DST_COLOR, gl.ONE_MINUS_SRC_ALPHA, true);
@@ -2826,11 +2377,8 @@ window.Laya= (function (exports) {
         static BlendNormalTarget(gl) {
             WebGLContext.setBlendFunc(gl, gl.ONE, gl.ONE_MINUS_SRC_ALPHA, true);
         }
-        static BlendAddTargetOld(gl) {
-            WebGLContext.setBlendFunc(gl, gl.ONE, gl.DST_ALPHA, true);
-        }
         static BlendAddTarget(gl) {
-            WebGLContext.setBlendFunc(gl, gl.ONE, gl.ONE, true);
+            WebGLContext.setBlendFunc(gl, gl.ONE, gl.DST_ALPHA, true);
         }
         static BlendMultiplyTarget(gl) {
             WebGLContext.setBlendFunc(gl, gl.DST_COLOR, gl.ONE_MINUS_SRC_ALPHA, true);
@@ -2852,30 +2400,8 @@ window.Laya= (function (exports) {
         }
     }
     BlendMode.activeBlendFunction = null;
-    BlendMode.NAMES = [
-        "normal",
-        "add",
-        "multiply",
-        "screen",
-        "overlay",
-        "light",
-        "mask",
-        "destination-out",
-        "add_old"
-    ];
-    BlendMode.TOINT = {
-        "normal": 0,
-        "add": 1,
-        "multiply": 2,
-        "screen": 3,
-        "overlay": 4,
-        "light": 5,
-        "mask": 6,
-        "destination-out": 7,
-        "lighter": 1,
-        "lighter_old": 8,
-        "add_old": 8
-    };
+    BlendMode.NAMES = ["normal", "add", "multiply", "screen", "overlay", "light", "mask", "destination-out"];
+    BlendMode.TOINT = { "normal": 0, "add": 1, "multiply": 2, "screen": 3, "overlay": 4, "light": 5, "mask": 6, "destination-out": 7, "lighter": 1 };
     BlendMode.NORMAL = "normal";
     BlendMode.ADD = "add";
     BlendMode.MULTIPLY = "multiply";
@@ -7599,24 +7125,13 @@ window.Laya= (function (exports) {
             var u = Browser.userAgent = win.navigator.userAgent;
             var maxTouchPoints = win.navigator.maxTouchPoints || 0;
             var platform = win.navigator.platform;
-            if ("my" in Browser.window) {
-                if ("tb" in Browser.window.my) {
-                    window.tbMiniGame(Laya, Laya);
-                    if (!Laya["TBMiniAdapter"]) {
-                        console.error("请先添加淘宝适配库,详细教程：https://ldc2.layabox.com/doc/?language=zh&nav=zh-ts-5-6-0");
-                    }
-                    else {
-                        Laya["TBMiniAdapter"].enable();
-                    }
+            if (u.indexOf('AlipayMiniGame') > -1 && "my" in Browser.window) {
+                window.aliPayMiniGame(Laya, Laya);
+                if (!Laya["ALIMiniAdapter"]) {
+                    console.error("请先添加阿里小游戏适配库,详细教程：https://ldc2.layabox.com/doc/?language=zh&nav=zh-ts-5-6-0");
                 }
-                else if (u.indexOf('AlipayMiniGame') > -1) {
-                    window.aliPayMiniGame(Laya, Laya);
-                    if (!Laya["ALIMiniAdapter"]) {
-                        console.error("请先添加阿里小游戏适配库,详细教程：https://ldc2.layabox.com/doc/?language=zh&nav=zh-ts-5-6-0");
-                    }
-                    else {
-                        Laya["ALIMiniAdapter"].enable();
-                    }
+                else {
+                    Laya["ALIMiniAdapter"].enable();
                 }
             }
             if (u.indexOf('OPPO') == -1 && u.indexOf("MiniGame") > -1 && "wx" in Browser.window) {
@@ -7765,9 +7280,6 @@ window.Laya= (function (exports) {
             if (u.indexOf('AlipayMiniGame') > -1) {
                 Browser.onAlipayMiniGame = true;
                 Browser.onMiniGame = false;
-            }
-            if (u.indexOf('TB/') > -1 || u.indexOf('Taobao/') > -1 || u.indexOf('TM/') > -1) {
-                Browser.onTBMiniGame = true;
             }
             return win;
         }
@@ -8087,7 +7599,7 @@ window.Laya= (function (exports) {
             if (miniadp && miniadp.systemInfo && miniadp.systemInfo.system) {
                 bugIOS = miniadp.systemInfo.system.toLowerCase() === 'ios 10.1.1';
             }
-            if ((ILaya.Browser.onMiniGame || ILaya.Browser.onTTMiniGame || ILaya.Browser.onBLMiniGame || ILaya.Browser.onAlipayMiniGame || ILaya.Browser.onTBMiniGame) && !bugIOS)
+            if ((ILaya.Browser.onMiniGame || ILaya.Browser.onTTMiniGame || ILaya.Browser.onBLMiniGame || ILaya.Browser.onAlipayMiniGame) && !bugIOS)
                 TextRender.isWan1Wan = true;
             this.charRender = ILaya.Render.isConchApp ? (new CharRender_Native()) : (new CharRender_Canvas(2048, 2048, TextRender.scaleFontWithCtx, !TextRender.isWan1Wan, false));
             TextRender.textRenderInst = this;
@@ -8118,8 +7630,6 @@ window.Laya= (function (exports) {
         getNextChar(str) {
             var len = str.length;
             var start = this._curStrPos;
-            if (!str.substring)
-                return null;
             if (start >= len)
                 return null;
             var i = start;
@@ -8170,7 +7680,7 @@ window.Laya= (function (exports) {
             this._fast_filltext(ctx, null, data, x, y, font, color, strokeColor, lineWidth, 0, 0);
         }
         _fast_filltext(ctx, data, htmlchars, x, y, font, color, strokeColor, lineWidth, textAlign, underLine = 0) {
-            if (data && !(data.length >= 1))
+            if (data && data.length < 1)
                 return;
             if (htmlchars && htmlchars.length < 1)
                 return;
@@ -8195,7 +7705,7 @@ window.Laya= (function (exports) {
             font._italic && (ctx._italicDeg = 13);
             var wt = data;
             var isWT = !htmlchars && (data instanceof WordText);
-            var str = data && data.toString();
+            var str = data;
             var isHtmlChar = !!htmlchars;
             var sameTexData = isWT ? wt.pageChars : [];
             var strWidth = 0;
@@ -8315,7 +7825,8 @@ window.Laya= (function (exports) {
             }
         }
         hasFreedText(txts) {
-            for (let i in txts) {
+            var sz = txts.length;
+            for (var i = 0; i < sz; i++) {
                 var pri = txts[i];
                 if (!pri)
                     continue;
@@ -10886,7 +10397,7 @@ window.Laya= (function (exports) {
         static supportTextureFormat(format) {
             switch (format) {
                 case exports.TextureFormat.R32G32B32A32:
-                    return (!LayaGL.layaGPUInstance._isWebGL2 && !LayaGL.layaGPUInstance._oesTextureFloat) ? false : true;
+                    return (!LayaGL.layaGPUInstance._oesTextureFloat) ? false : true;
                 default:
                     return true;
             }
@@ -10894,7 +10405,7 @@ window.Laya= (function (exports) {
         static supportRenderTextureFormat(format) {
             switch (format) {
                 case exports.RenderTextureFormat.R16G16B16A16:
-                    return (((!!LayaGL.layaGPUInstance._isWebGL2) && (!!LayaGL.layaGPUInstance._extColorBufferFloat)) || LayaGL.layaGPUInstance._oesTextureHalfFloat && LayaGL.layaGPUInstance._oesTextureHalfFloatLinear) ? true : false;
+                    return (((!!LayaGL.layaGPUInstance._isWebGL2) && (!!LayaGL.layaGPUInstance._oesTextureFloat)) || LayaGL.layaGPUInstance._oesTextureHalfFloat && LayaGL.layaGPUInstance._oesTextureHalfFloatLinear) ? true : false;
                 case exports.RenderTextureFormat.Depth:
                     return (LayaGL.layaGPUInstance._isWebGL2 || LayaGL.layaGPUInstance._webgl_depth_texture) ? true : false;
                 case exports.RenderTextureFormat.ShadowMap:
@@ -10921,7 +10432,6 @@ window.Laya= (function (exports) {
             this._compressedTexturePvrtc = null;
             this._compressedTextureEtc1 = null;
             this._webgl_depth_texture = null;
-            this._extColorBufferFloat = null;
             this._gl = gl;
             this._isWebGL2 = isWebGL2;
             var maxTextureFS = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
@@ -10942,7 +10452,7 @@ window.Laya= (function (exports) {
                 SystemUtils._shaderCapailityLevel = 30;
             }
             else {
-                this._extColorBufferFloat = this._getExtension("EXT_color_buffer_float");
+                this._oesTextureFloat = this._getExtension("EXT_color_buffer_float");
                 SystemUtils._shaderCapailityLevel = 35;
             }
             this._extTextureFilterAnisotropic = this._getExtension("EXT_texture_filter_anisotropic");
@@ -12645,8 +12155,7 @@ window.Laya= (function (exports) {
                     ctx.breakNextMerge();
                     ctx.popRT();
                     ctx.save();
-                    let shrink = 0.1;
-                    ctx.clipRect(x + tRect.x - sprite.getStyle().pivotX + shrink, y + tRect.y - sprite.getStyle().pivotY + shrink, w - shrink * 2, h - shrink * 2);
+                    ctx.clipRect(x + tRect.x - sprite.getStyle().pivotX, y + tRect.y - sprite.getStyle().pivotY, w, h);
                     next._fun.call(next, sprite, ctx, x, y);
                     ctx.restore();
                     preBlendMode = ctx.globalCompositeOperation;
@@ -15719,7 +15228,7 @@ window.Laya= (function (exports) {
             Input._createInputElement();
             if (ILaya.Browser.onMobile) {
                 var isTrue = false;
-                if (ILaya.Browser.onMiniGame || ILaya.Browser.onBDMiniGame || ILaya.Browser.onQGMiniGame || ILaya.Browser.onKGMiniGame || ILaya.Browser.onVVMiniGame || ILaya.Browser.onAlipayMiniGame || ILaya.Browser.onQQMiniGame || ILaya.Browser.onBLMiniGame || ILaya.Browser.onTTMiniGame || ILaya.Browser.onHWMiniGame || ILaya.Browser.onTBMiniGame) {
+                if (ILaya.Browser.onMiniGame || ILaya.Browser.onBDMiniGame || ILaya.Browser.onQGMiniGame || ILaya.Browser.onKGMiniGame || ILaya.Browser.onVVMiniGame || ILaya.Browser.onAlipayMiniGame || ILaya.Browser.onQQMiniGame || ILaya.Browser.onBLMiniGame || ILaya.Browser.onTTMiniGame || ILaya.Browser.onHWMiniGame) {
                     isTrue = true;
                 }
                 ILaya.Render.canvas.addEventListener(Input.IOS_IFRAME ? (isTrue ? "touchend" : "click") : "touchend", Input._popupInputMethod);
@@ -15863,7 +15372,6 @@ window.Laya= (function (exports) {
         _focusIn() {
             Input.isInputting = true;
             var input = this.nativeInput;
-            Input.input && (Input.input.type = this._type);
             this._focus = true;
             var cssStyle = input.style;
             cssStyle.whiteSpace = (this.wordWrap ? "pre-wrap" : "nowrap");
@@ -15883,7 +15391,7 @@ window.Laya= (function (exports) {
             this.event(Event.FOCUS);
             if (ILaya.Browser.onPC)
                 input.focus();
-            if (!ILaya.Browser.onMiniGame && !ILaya.Browser.onBDMiniGame && !ILaya.Browser.onQGMiniGame && !ILaya.Browser.onKGMiniGame && !ILaya.Browser.onVVMiniGame && !ILaya.Browser.onAlipayMiniGame && !ILaya.Browser.onQQMiniGame && !ILaya.Browser.onBLMiniGame && !ILaya.Browser.onTTMiniGame && !ILaya.Browser.onHWMiniGame && !ILaya.Browser.onTBMiniGame) {
+            if (!ILaya.Browser.onMiniGame && !ILaya.Browser.onBDMiniGame && !ILaya.Browser.onQGMiniGame && !ILaya.Browser.onKGMiniGame && !ILaya.Browser.onVVMiniGame && !ILaya.Browser.onAlipayMiniGame && !ILaya.Browser.onQQMiniGame && !ILaya.Browser.onBLMiniGame && !ILaya.Browser.onTTMiniGame && !ILaya.Browser.onHWMiniGame) {
                 var temp = this._text;
                 this._text = null;
             }
@@ -17033,8 +16541,6 @@ window.Laya= (function (exports) {
             super.set_transform(this.transform);
             canvasStyle.transformOrigin = canvasStyle.webkitTransformOrigin = canvasStyle.msTransformOrigin = canvasStyle.mozTransformOrigin = canvasStyle.oTransformOrigin = "0px 0px 0px";
             canvasStyle.transform = canvasStyle.webkitTransform = canvasStyle.msTransform = canvasStyle.mozTransform = canvasStyle.oTransform = "matrix(" + mat.toString() + ")";
-            canvasStyle.width = canvasWidth;
-            canvasStyle.height = canvasHeight;
             if (this._safariOffsetY)
                 mat.translate(0, -this._safariOffsetY);
             mat.translate(parseInt(canvasStyle.left) || 0, parseInt(canvasStyle.top) || 0);
@@ -18205,7 +17711,7 @@ window.Laya= (function (exports) {
                     return null;
             }
             var tSound;
-            if (!ILaya.Browser.onBDMiniGame && !ILaya.Browser.onMiniGame && !ILaya.Browser.onKGMiniGame && !ILaya.Browser.onQGMiniGame && !ILaya.Browser.onVVMiniGame && !ILaya.Browser.onAlipayMiniGame && !ILaya.Browser.onQQMiniGame && !ILaya.Browser.onBLMiniGame && !ILaya.Browser.onTTMiniGame && !ILaya.Browser.onHWMiniGame && !ILaya.Browser.onTBMiniGame) {
+            if (!ILaya.Browser.onBDMiniGame && !ILaya.Browser.onMiniGame && !ILaya.Browser.onKGMiniGame && !ILaya.Browser.onQGMiniGame && !ILaya.Browser.onVVMiniGame && !ILaya.Browser.onAlipayMiniGame && !ILaya.Browser.onQQMiniGame && !ILaya.Browser.onBLMiniGame && !ILaya.Browser.onTTMiniGame && !ILaya.Browser.onHWMiniGame) {
                 tSound = ILaya.loader.getRes(url);
             }
             if (!soundClass)
@@ -18213,7 +17719,7 @@ window.Laya= (function (exports) {
             if (!tSound) {
                 tSound = new soundClass();
                 tSound.load(url);
-                if (!ILaya.Browser.onBDMiniGame && !ILaya.Browser.onMiniGame && !ILaya.Browser.onKGMiniGame && !ILaya.Browser.onQGMiniGame && !ILaya.Browser.onVVMiniGame && !ILaya.Browser.onAlipayMiniGame && !ILaya.Browser.onQQMiniGame && !ILaya.Browser.onBLMiniGame && !ILaya.Browser.onTTMiniGame && !ILaya.Browser.onHWMiniGame && !ILaya.Browser.onTBMiniGame) {
+                if (!ILaya.Browser.onBDMiniGame && !ILaya.Browser.onMiniGame && !ILaya.Browser.onKGMiniGame && !ILaya.Browser.onQGMiniGame && !ILaya.Browser.onVVMiniGame && !ILaya.Browser.onAlipayMiniGame && !ILaya.Browser.onQQMiniGame && !ILaya.Browser.onBLMiniGame && !ILaya.Browser.onTTMiniGame && !ILaya.Browser.onHWMiniGame) {
                     ILaya.Loader.cacheRes(url, tSound);
                 }
             }
@@ -18331,6 +17837,410 @@ window.Laya= (function (exports) {
             return null;
         }
     }
+
+    class Byte {
+        constructor(data = null) {
+            this._xd_ = true;
+            this._allocated_ = 8;
+            this._pos_ = 0;
+            this._length = 0;
+            if (data) {
+                this._u8d_ = new Uint8Array(data);
+                this._d_ = new DataView(this._u8d_.buffer);
+                this._length = this._d_.byteLength;
+            }
+            else {
+                this._resizeBuffer(this._allocated_);
+            }
+        }
+        static getSystemEndian() {
+            if (!Byte._sysEndian) {
+                var buffer = new ArrayBuffer(2);
+                new DataView(buffer).setInt16(0, 256, true);
+                Byte._sysEndian = (new Int16Array(buffer))[0] === 256 ? Byte.LITTLE_ENDIAN : Byte.BIG_ENDIAN;
+            }
+            return Byte._sysEndian;
+        }
+        get buffer() {
+            var rstBuffer = this._d_.buffer;
+            if (rstBuffer.byteLength === this._length)
+                return rstBuffer;
+            return rstBuffer.slice(0, this._length);
+        }
+        get endian() {
+            return this._xd_ ? Byte.LITTLE_ENDIAN : Byte.BIG_ENDIAN;
+        }
+        set endian(value) {
+            this._xd_ = (value === Byte.LITTLE_ENDIAN);
+        }
+        set length(value) {
+            if (this._allocated_ < value)
+                this._resizeBuffer(this._allocated_ = Math.floor(Math.max(value, this._allocated_ * 2)));
+            else if (this._allocated_ > value)
+                this._resizeBuffer(this._allocated_ = value);
+            this._length = value;
+        }
+        get length() {
+            return this._length;
+        }
+        _resizeBuffer(len) {
+            try {
+                var newByteView = new Uint8Array(len);
+                if (this._u8d_ != null) {
+                    if (this._u8d_.length <= len)
+                        newByteView.set(this._u8d_);
+                    else
+                        newByteView.set(this._u8d_.subarray(0, len));
+                }
+                this._u8d_ = newByteView;
+                this._d_ = new DataView(newByteView.buffer);
+            }
+            catch (err) {
+                throw "Invalid typed array length:" + len;
+            }
+        }
+        getString() {
+            return this.readString();
+        }
+        readString() {
+            return this._rUTF(this.getUint16());
+        }
+        getFloat32Array(start, len) {
+            return this.readFloat32Array(start, len);
+        }
+        readFloat32Array(start, len) {
+            var end = start + len;
+            end = (end > this._length) ? this._length : end;
+            var v = new Float32Array(this._d_.buffer.slice(start, end));
+            this._pos_ = end;
+            return v;
+        }
+        getUint8Array(start, len) {
+            return this.readUint8Array(start, len);
+        }
+        readUint8Array(start, len) {
+            var end = start + len;
+            end = (end > this._length) ? this._length : end;
+            var v = new Uint8Array(this._d_.buffer.slice(start, end));
+            this._pos_ = end;
+            return v;
+        }
+        getInt16Array(start, len) {
+            return this.readInt16Array(start, len);
+        }
+        readInt16Array(start, len) {
+            var end = start + len;
+            end = (end > this._length) ? this._length : end;
+            var v = new Int16Array(this._d_.buffer.slice(start, end));
+            this._pos_ = end;
+            return v;
+        }
+        getFloat32() {
+            return this.readFloat32();
+        }
+        readFloat32() {
+            if (this._pos_ + 4 > this._length)
+                throw "getFloat32 error - Out of bounds";
+            var v = this._d_.getFloat32(this._pos_, this._xd_);
+            this._pos_ += 4;
+            return v;
+        }
+        getFloat64() {
+            return this.readFloat64();
+        }
+        readFloat64() {
+            if (this._pos_ + 8 > this._length)
+                throw "getFloat64 error - Out of bounds";
+            var v = this._d_.getFloat64(this._pos_, this._xd_);
+            this._pos_ += 8;
+            return v;
+        }
+        writeFloat32(value) {
+            this._ensureWrite(this._pos_ + 4);
+            this._d_.setFloat32(this._pos_, value, this._xd_);
+            this._pos_ += 4;
+        }
+        writeFloat64(value) {
+            this._ensureWrite(this._pos_ + 8);
+            this._d_.setFloat64(this._pos_, value, this._xd_);
+            this._pos_ += 8;
+        }
+        getInt32() {
+            return this.readInt32();
+        }
+        readInt32() {
+            if (this._pos_ + 4 > this._length)
+                throw "getInt32 error - Out of bounds";
+            var float = this._d_.getInt32(this._pos_, this._xd_);
+            this._pos_ += 4;
+            return float;
+        }
+        getUint32() {
+            return this.readUint32();
+        }
+        readUint32() {
+            if (this._pos_ + 4 > this._length)
+                throw "getUint32 error - Out of bounds";
+            var v = this._d_.getUint32(this._pos_, this._xd_);
+            this._pos_ += 4;
+            return v;
+        }
+        writeInt32(value) {
+            this._ensureWrite(this._pos_ + 4);
+            this._d_.setInt32(this._pos_, value, this._xd_);
+            this._pos_ += 4;
+        }
+        writeUint32(value) {
+            this._ensureWrite(this._pos_ + 4);
+            this._d_.setUint32(this._pos_, value, this._xd_);
+            this._pos_ += 4;
+        }
+        getInt16() {
+            return this.readInt16();
+        }
+        readInt16() {
+            if (this._pos_ + 2 > this._length)
+                throw "getInt16 error - Out of bounds";
+            var us = this._d_.getInt16(this._pos_, this._xd_);
+            this._pos_ += 2;
+            return us;
+        }
+        getUint16() {
+            return this.readUint16();
+        }
+        readUint16() {
+            if (this._pos_ + 2 > this._length)
+                throw "getUint16 error - Out of bounds";
+            var us = this._d_.getUint16(this._pos_, this._xd_);
+            this._pos_ += 2;
+            return us;
+        }
+        writeUint16(value) {
+            this._ensureWrite(this._pos_ + 2);
+            this._d_.setUint16(this._pos_, value, this._xd_);
+            this._pos_ += 2;
+        }
+        writeInt16(value) {
+            this._ensureWrite(this._pos_ + 2);
+            this._d_.setInt16(this._pos_, value, this._xd_);
+            this._pos_ += 2;
+        }
+        getUint8() {
+            return this.readUint8();
+        }
+        readUint8() {
+            if (this._pos_ + 1 > this._length)
+                throw "getUint8 error - Out of bounds";
+            return this._u8d_[this._pos_++];
+        }
+        writeUint8(value) {
+            this._ensureWrite(this._pos_ + 1);
+            this._d_.setUint8(this._pos_, value);
+            this._pos_++;
+        }
+        _getUInt8(pos) {
+            return this._readUInt8(pos);
+        }
+        _readUInt8(pos) {
+            return this._d_.getUint8(pos);
+        }
+        _getUint16(pos) {
+            return this._readUint16(pos);
+        }
+        _readUint16(pos) {
+            return this._d_.getUint16(pos, this._xd_);
+        }
+        _getMatrix() {
+            return this._readMatrix();
+        }
+        _readMatrix() {
+            var rst = new Matrix(this.getFloat32(), this.getFloat32(), this.getFloat32(), this.getFloat32(), this.getFloat32(), this.getFloat32());
+            return rst;
+        }
+        _rUTF(len) {
+            var max = this._pos_ + len, c, c2, c3, f = String.fromCharCode;
+            var u = this._u8d_;
+            var strs = [];
+            var n = 0;
+            strs.length = 1000;
+            while (this._pos_ < max) {
+                c = u[this._pos_++];
+                if (c < 0x80) {
+                    if (c != 0)
+                        strs[n++] = f(c);
+                }
+                else if (c < 0xE0) {
+                    strs[n++] = f(((c & 0x3F) << 6) | (u[this._pos_++] & 0x7F));
+                }
+                else if (c < 0xF0) {
+                    c2 = u[this._pos_++];
+                    strs[n++] = f(((c & 0x1F) << 12) | ((c2 & 0x7F) << 6) | (u[this._pos_++] & 0x7F));
+                }
+                else {
+                    c2 = u[this._pos_++];
+                    c3 = u[this._pos_++];
+                    const _code = ((c & 0x0F) << 18) | ((c2 & 0x7F) << 12) | ((c3 & 0x7F) << 6) | (u[this._pos_++] & 0x7F);
+                    if (_code >= 0x10000) {
+                        const _offset = _code - 0x10000;
+                        const _lead = 0xd800 | (_offset >> 10);
+                        const _trail = 0xdc00 | (_offset & 0x3ff);
+                        strs[n++] = f(_lead);
+                        strs[n++] = f(_trail);
+                    }
+                    else {
+                        strs[n++] = f(_code);
+                    }
+                }
+            }
+            strs.length = n;
+            return strs.join('');
+        }
+        getCustomString(len) {
+            return this.readCustomString(len);
+        }
+        readCustomString(len) {
+            var v = "", ulen = 0, c, c2, f = String.fromCharCode;
+            var u = this._u8d_;
+            while (len > 0) {
+                c = u[this._pos_];
+                if (c < 0x80) {
+                    v += f(c);
+                    this._pos_++;
+                    len--;
+                }
+                else {
+                    ulen = c - 0x80;
+                    this._pos_++;
+                    len -= ulen;
+                    while (ulen > 0) {
+                        c = u[this._pos_++];
+                        c2 = u[this._pos_++];
+                        v += f((c2 << 8) | c);
+                        ulen--;
+                    }
+                }
+            }
+            return v;
+        }
+        get pos() {
+            return this._pos_;
+        }
+        set pos(value) {
+            this._pos_ = value;
+        }
+        get bytesAvailable() {
+            return this._length - this._pos_;
+        }
+        clear() {
+            this._pos_ = 0;
+            this.length = 0;
+        }
+        __getBuffer() {
+            return this._d_.buffer;
+        }
+        writeUTFBytes(value) {
+            value = value + "";
+            for (var i = 0, sz = value.length; i < sz; i++) {
+                var c = value.charCodeAt(i);
+                if (c <= 0x7F) {
+                    this.writeByte(c);
+                }
+                else if (c <= 0x7FF) {
+                    this._ensureWrite(this._pos_ + 2);
+                    this._u8d_.set([0xC0 | (c >> 6), 0x80 | (c & 0x3F)], this._pos_);
+                    this._pos_ += 2;
+                }
+                else if (c >= 0xD800 && c <= 0xDBFF) {
+                    i++;
+                    const c2 = value.charCodeAt(i);
+                    if (!Number.isNaN(c2) && c2 >= 0xDC00 && c2 <= 0xDFFF) {
+                        const _p1 = (c & 0x3FF) + 0x40;
+                        const _p2 = c2 & 0x3FF;
+                        const _b1 = 0xF0 | ((_p1 >> 8) & 0x3F);
+                        const _b2 = 0x80 | ((_p1 >> 2) & 0x3F);
+                        const _b3 = 0x80 | ((_p1 & 0x3) << 4) | ((_p2 >> 6) & 0xF);
+                        const _b4 = 0x80 | (_p2 & 0x3F);
+                        this._ensureWrite(this._pos_ + 4);
+                        this._u8d_.set([_b1, _b2, _b3, _b4], this._pos_);
+                        this._pos_ += 4;
+                    }
+                }
+                else if (c <= 0xFFFF) {
+                    this._ensureWrite(this._pos_ + 3);
+                    this._u8d_.set([0xE0 | (c >> 12), 0x80 | ((c >> 6) & 0x3F), 0x80 | (c & 0x3F)], this._pos_);
+                    this._pos_ += 3;
+                }
+                else {
+                    this._ensureWrite(this._pos_ + 4);
+                    this._u8d_.set([0xF0 | (c >> 18), 0x80 | ((c >> 12) & 0x3F), 0x80 | ((c >> 6) & 0x3F), 0x80 | (c & 0x3F)], this._pos_);
+                    this._pos_ += 4;
+                }
+            }
+        }
+        writeUTFString(value) {
+            var tPos = this.pos;
+            this.writeUint16(1);
+            this.writeUTFBytes(value);
+            var dPos = this.pos - tPos - 2;
+            this._d_.setUint16(tPos, dPos, this._xd_);
+        }
+        readUTFString() {
+            return this.readUTFBytes(this.getUint16());
+        }
+        getUTFString() {
+            return this.readUTFString();
+        }
+        readUTFBytes(len = -1) {
+            if (len === 0)
+                return "";
+            var lastBytes = this.bytesAvailable;
+            if (len > lastBytes)
+                throw "readUTFBytes error - Out of bounds";
+            len = len > 0 ? len : lastBytes;
+            return this._rUTF(len);
+        }
+        getUTFBytes(len = -1) {
+            return this.readUTFBytes(len);
+        }
+        writeByte(value) {
+            this._ensureWrite(this._pos_ + 1);
+            this._d_.setInt8(this._pos_, value);
+            this._pos_ += 1;
+        }
+        readByte() {
+            if (this._pos_ + 1 > this._length)
+                throw "readByte error - Out of bounds";
+            return this._d_.getInt8(this._pos_++);
+        }
+        getByte() {
+            return this.readByte();
+        }
+        _ensureWrite(lengthToEnsure) {
+            if (this._length < lengthToEnsure)
+                this._length = lengthToEnsure;
+            if (this._allocated_ < lengthToEnsure)
+                this.length = lengthToEnsure;
+        }
+        writeArrayBuffer(arraybuffer, offset = 0, length = 0) {
+            if (offset < 0 || length < 0)
+                throw "writeArrayBuffer error - Out of bounds";
+            if (length == 0)
+                length = arraybuffer.byteLength - offset;
+            this._ensureWrite(this._pos_ + length);
+            var uint8array = new Uint8Array(arraybuffer);
+            this._u8d_.set(uint8array.subarray(offset, offset + length), this._pos_);
+            this._pos_ += length;
+        }
+        readArrayBuffer(length) {
+            var rst;
+            rst = this._u8d_.buffer.slice(this._pos_, this._pos_ + length);
+            this._pos_ = this._pos_ + length;
+            return rst;
+        }
+    }
+    Byte.BIG_ENDIAN = "bigEndian";
+    Byte.LITTLE_ENDIAN = "littleEndian";
+    Byte._sysEndian = null;
 
     class BitmapFont {
         constructor() {
@@ -18485,7 +18395,7 @@ window.Laya= (function (exports) {
         send(url, data = null, method = "get", responseType = "text", headers = null) {
             this._responseType = responseType;
             this._data = null;
-            if (Browser.onVVMiniGame || Browser.onQGMiniGame || Browser.onQQMiniGame || Browser.onAlipayMiniGame || Browser.onBLMiniGame || Browser.onHWMiniGame || Browser.onTTMiniGame || Browser.onTBMiniGame) {
+            if (Browser.onVVMiniGame || Browser.onQGMiniGame || Browser.onQQMiniGame || Browser.onAlipayMiniGame || Browser.onBLMiniGame || Browser.onHWMiniGame || Browser.onTTMiniGame) {
                 url = HttpRequest._urlEncode(url);
             }
             this._url = url;
@@ -18860,41 +18770,16 @@ window.Laya= (function (exports) {
                         data.pics = [];
                     }
                     this.event(Event.PROGRESS, 0.3 + 1 / toloadPics.length * 0.6);
-                    return this._loadResourceFilter(Loader.IMAGE, URL.formatURL(toloadPics.pop()));
+                    return this._loadResourceFilter(Loader.IMAGE, toloadPics.pop());
                 }
                 else {
                     if (!(data instanceof Texture2D)) {
-                        if (data instanceof ArrayBuffer) {
-                            let url = this._http.url;
-                            var ext = Utils.getFileExtension(url);
-                            let format;
-                            switch (ext) {
-                                case "ktx":
-                                    format = exports.TextureFormat.ETC1RGB;
-                                    break;
-                                case "pvr":
-                                    format = exports.TextureFormat.PVRTCRGBA_4BPPV;
-                                    break;
-                                default: {
-                                    console.error('unknown format', ext);
-                                    return;
-                                }
-                            }
-                            let tex = new Texture2D(0, 0, format, false, false);
-                            tex.wrapModeU = exports.WarpMode.Clamp;
-                            tex.wrapModeV = exports.WarpMode.Clamp;
-                            tex.setCompressData(data);
-                            tex._setCreateURL(url);
-                            data = tex;
-                        }
-                        else {
-                            let tex = new Texture2D(data.width, data.height, 1, false, false);
-                            tex.wrapModeU = BaseTexture.WARPMODE_CLAMP;
-                            tex.wrapModeV = BaseTexture.WARPMODE_CLAMP;
-                            tex.loadImageSource(data, true);
-                            tex._setCreateURL(data.src);
-                            data = tex;
-                        }
+                        let tex = new Texture2D(data.width, data.height, 1, false, false);
+                        tex.wrapModeU = BaseTexture.WARPMODE_CLAMP;
+                        tex.wrapModeV = BaseTexture.WARPMODE_CLAMP;
+                        tex.loadImageSource(data, true);
+                        tex._setCreateURL(data.src);
+                        data = tex;
                     }
                     this._data.pics.push(data);
                     if (this._data.toLoads.length > 0) {
@@ -19693,7 +19578,7 @@ window.Laya= (function (exports) {
     class TTFLoader {
         load(fontPath) {
             this._url = fontPath;
-            var tArr = fontPath.toLowerCase().split(".ttf")[0].split("/");
+            var tArr = fontPath.split(".ttf")[0].split("/");
             this.fontName = tArr[tArr.length - 1];
             if (ILaya.Render.isConchApp) {
                 this._loadConch();
@@ -21363,7 +21248,7 @@ window.Laya= (function (exports) {
             this._view = [];
         }
         show(x = 0, y = 0) {
-            if (!Browser.onMiniGame && !ILaya.Render.isConchApp && !Browser.onBDMiniGame && !Browser.onKGMiniGame && !Browser.onQGMiniGame && !Browser.onQQMiniGame && !Browser.onAlipayMiniGame && !Browser.onBLMiniGame && !Browser.onTTMiniGame && !Browser.onHWMiniGame && !Browser.onTBMiniGame)
+            if (!Browser.onMiniGame && !ILaya.Render.isConchApp && !Browser.onBDMiniGame && !Browser.onKGMiniGame && !Browser.onQGMiniGame && !Browser.onQQMiniGame && !Browser.onAlipayMiniGame && !Browser.onBLMiniGame && !Browser.onTTMiniGame && !Browser.onHWMiniGame)
                 this._useCanvas = true;
             this._show = true;
             Stat._fpsData.length = 60;
@@ -22553,7 +22438,7 @@ window.Laya= (function (exports) {
     Laya.lateTimer = null;
     Laya.timer = null;
     Laya.loader = null;
-    Laya.version = "2.8.0";
+    Laya.version = "2.7.1";
     Laya._isinit = false;
     Laya.isWXOpenDataContext = false;
     Laya.isWXPosMsg = false;
@@ -23723,6 +23608,7 @@ window.Laya= (function (exports) {
             this.url = null;
             this._viewCreated = false;
             this._$componentType = "Scene";
+            this._setBit(Const.NOT_READY, true);
             Scene.unDestroyedScenes.push(this);
             this._scene = this;
             if (createChildren)
@@ -23748,7 +23634,6 @@ window.Laya= (function (exports) {
                 this.createView(view);
             }
             else {
-                this._setBit(Const.NOT_READY, true);
                 ILaya.loader.resetProgress();
                 var loader = new SceneLoader();
                 loader.on(Event.COMPLETE, this, this._onSceneLoaded, [url]);
@@ -23901,7 +23786,7 @@ window.Laya= (function (exports) {
                 }
                 if (scene && scene instanceof Node) {
                     scene.url = url;
-                    if (scene._viewCreated) {
+                    if (!scene._getBit(Const.NOT_READY)) {
                         complete && complete.runWith(scene);
                     }
                     else {
@@ -24969,76 +24854,6 @@ window.Laya= (function (exports) {
         TextureDecodeFormat[TextureDecodeFormat["RGBM"] = 1] = "RGBM";
     })(exports.TextureDecodeFormat || (exports.TextureDecodeFormat = {}));
 
-    class VideoTexture extends BaseTexture {
-        constructor() {
-            var gl = LayaGL.instance;
-            super(gl.RGB, false);
-            this._glTextureType = gl.TEXTURE_2D;
-            this._width = 1;
-            this._height = 1;
-            this._wrapModeU = this._wrapModeV = exports.WarpMode.Clamp;
-            this._filterMode = exports.FilterMode.Bilinear;
-            this._setWarpMode(gl.TEXTURE_WRAP_S, this._wrapModeU);
-            this._setWarpMode(gl.TEXTURE_WRAP_T, this._wrapModeV);
-            this._setFilterMode(this._filterMode);
-            this._needUpdate = false;
-            this._readyed = true;
-            VideoTexture._videoTexturePool.push(this);
-        }
-        static _update() {
-            var pool = VideoTexture._videoTexturePool;
-            for (var i = 0, n = pool.length; i < n; i++) {
-                var videoElement = pool[i];
-                (videoElement) && videoElement._updateVideoData();
-            }
-        }
-        get video() {
-            return this._video;
-        }
-        set video(value) {
-            if (!value || !(value instanceof HTMLVideoElement))
-                return;
-            this._video = value;
-            if (Laya.Browser.onMobile) {
-                this._video["x5-playsInline"] = true;
-                this._video["x5-playsinline"] = true;
-                this._video.x5PlaysInline = true;
-                this._video.playsInline = true;
-                this._video["webkit-playsInline"] = true;
-                this._video["webkit-playsinline"] = true;
-                this._video.webkitPlaysInline = true;
-                this._video.playsinline = true;
-                this._video.style.playsInline = true;
-                this._video.crossOrigin = "anonymous";
-                this._video.setAttribute('crossorigin', "anonymous");
-                this._video.setAttribute('playsinline', 'true');
-                this._video.setAttribute('x5-playsinline', 'true');
-                this._video.setAttribute('webkit-playsinline', 'true');
-                this._video.autoplay = true;
-            }
-        }
-        _updateVideoData() {
-            if (!this._video || !this._needUpdate)
-                return;
-            var gl = LayaGL.instance;
-            WebGLContext.bindTexture(gl, this._glTextureType, this._glTexture);
-            gl.texImage2D(this._glTextureType, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, this._video);
-        }
-        videoPlay() {
-            this._video.play();
-            this._needUpdate = true;
-        }
-        videoPause() {
-            this._video.pause();
-            this._needUpdate = false;
-        }
-        destroy() {
-            super.destroy();
-            this._video = null;
-        }
-    }
-    VideoTexture._videoTexturePool = new Array();
-
     class System {
         static changeDefinition(name, classObj) {
             window.Laya[name] = classObj;
@@ -26047,7 +25862,6 @@ window.Laya= (function (exports) {
     exports.VectorGraphManager = VectorGraphManager;
     exports.VertexArrayObject = VertexArrayObject;
     exports.VertexBuffer2D = VertexBuffer2D;
-    exports.VideoTexture = VideoTexture;
     exports.WeakObject = WeakObject;
     exports.WebAudioSound = WebAudioSound;
     exports.WebAudioSoundChannel = WebAudioSoundChannel;

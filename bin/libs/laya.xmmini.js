@@ -968,8 +968,6 @@ window.miMiniGame = function (exports, Laya) {
 	        Laya.Loader.prototype.originComplete = Laya.Loader.prototype.complete;
 	        Laya.Loader.prototype.complete = MiniLoader.prototype.complete;
 	        Laya.Loader.prototype._loadHttpRequestWhat = MiniLoader.prototype._loadHttpRequestWhat;
-	        Laya.Config.useRetinalCanvas = true;
-	        Laya.Config.useWebGL2 = false;
 	        KGMiniAdapter.window.qg.onMessage && KGMiniAdapter.window.qg.onMessage(KGMiniAdapter._onMessage);
 	    }
 	    static _onMessage(data) {

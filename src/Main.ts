@@ -1,6 +1,5 @@
+import Engine from "./Code/GameCode/Engine";
 import GameConfig from "./GameConfig";
-import UIManager from "./Managers/UIManager/UIControl";
-import View_Loading from "./Views/View_Loading";
 class Main {
 	constructor() {
 		//根据IDE设置初始化引擎		
@@ -31,10 +30,9 @@ class Main {
 	}
 
 	onConfigLoaded(): void {
-		//打开Loading界面
-		UIManager.ShowUI(View_Loading)
+		new Engine()
 		//加载IDE指定的场景
-		/*GameConfig.startScene && Laya.Scene.open(GameConfig.startScene);*/
+		// GameConfig.startScene && Laya.Scene.open(GameConfig.startScene);
 	}
 }
 //激活启动类

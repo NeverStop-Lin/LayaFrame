@@ -4,13 +4,13 @@
 * 游戏初始化配置;
 */
 export default class GameConfig{
-    static width:number=750;
-    static height:number=1334;
-    static scaleMode:string="fixedwidth";
-    static screenMode:string="vertical";
+    static width:number=1334;
+    static height:number=750;
+    static scaleMode:string="fixedheight";
+    static screenMode:string="horizontal";
     static alignV:string="middle";
     static alignH:string="center";
-    static startScene:any="Views/View_Loading.scene";
+    static startScene:any="View_Main.scene";
     static sceneRoot:string="";
     static debug:boolean=false;
     static stat:boolean=false;
