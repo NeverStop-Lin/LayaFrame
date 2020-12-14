@@ -10,12 +10,13 @@ class _UIControl {
      * @param _class UI类名
      * @template T 返回类型
     */
-    public ShowUI<T extends Laya.Scene>(_class: any, data?): T {
+    public ShowUI<T extends Laya.Scene>(_class: any, data?: any): T {
 
         let _index = UIControl.GetUIIndexFromViews(_class.NAME);
-        let _view = UIControl.Views[_index];
+        let _view:any = UIControl.Views[_index];
+        _class.DATA = data
         if (!_view) {
-            _view = new _class();
+            _view = new _class(data);
             UIControl.Views.push(_view);
         }
         _view.name = _class.NAME;
@@ -25,7 +26,7 @@ class _UIControl {
         if (_class.AUTO) {
             _view.addComponent(AutoPage)
         }
-        EventControl.emit(EventName.ShowUI, _view.name)
+        EventControl.emit(EventName.Frame.ShowUI, _view.name)
         return _view as T;
     }
 
@@ -39,7 +40,7 @@ class _UIControl {
             Laya.stage.removeChild(_view);
             _view.visible = false;
             _view.active = false;
-            EventControl.emit(EventName.HideUI, _view.name)
+            EventControl.emit(EventName.Frame.HideUI, _view.name)
         }
     }
 
@@ -50,13 +51,29 @@ class _UIControl {
         let _index = UIControl.GetUIIndexFromViews(_class.NAME);
         let _view = UIControl.Views[_index];
         if (_view) {
-            UIControl.Views.splice(_index, 1);
             Laya.stage.removeChild(_view);
-            Laya.timer.frameOnce(3, null, () => {
+            _view.visible = false;
+            _view.active = false;
+            _class.DATA = null
+            Laya.timer.clearAll(_view);
+            Laya.stage.offAllCaller(_view);
+            EventControl.offAll(_view);
+            UIControl.Views.splice(_index, 1);
+            Laya.timer.frameOnce(10, null, () => {
                 _view.destroy();
-                EventControl.emit(EventName.RemoveUI, _view.name)
+                EventControl.emit(EventName.Frame.RemoveUI, _view.name)
             });
         }
+    }
+
+    /**获取UI界面实例，没有则返回null
+    * @param _class UI类名
+    */
+    GetUI<T extends Laya.Scene>(_name: any) {
+        let _index = UIControl.GetUIIndexFromViews(_name.name);
+        let _view = UIControl.Views[_index];
+        if (_view) { return _view as T }
+        else { return null as T }
     }
 
     /**返回传入页面名字在UIControl.Views中首次出现的下标值

@@ -71,7 +71,12 @@
             class_path = "ui." + class_path + class_name + "UI";
 
             //组合内容
-            let data = `import { ui } from "${ui_path}";\nexport default class ${class_name} extends ${class_path} {\n  static NAME: string = "${class_name}"; //UI控制类需要使用,勿删。\n  static AUTO: boolean = true; //当前页面是否自动适应\n}`;
+            let data = `import { ui } from "${ui_path}";
+export default class ${class_name} extends ${class_path} {
+  static NAME: string = "${class_name}"; //UI控制类需要使用,勿删。
+  static AUTO: boolean = true; //当前页面是否自动适应
+  static DATA: any = null; //用于储存打开界面时的传参
+}`;
 
             mkdirsSync(ClassPATH + "\\" + pathParse.dir); //创建目录
             //创建目录
@@ -109,7 +114,7 @@
     function AssatConfig() {
 
         //修改的文件路径
-        let PATH = srcPath + "\\Code\\CommonCode\\ControlCode\\LoadResControl.ts"
+        let PATH = srcPath + "\\Code\\CommonCode\\ControlCode\\ResControl.ts"
 
         let content = FS.readFileSync(PATH, "utf-8");
 
@@ -173,7 +178,14 @@
             .replace(/"}/g, "}")
 
         //拼接字符串
-        content = `${StartContent}\nexport const ResPath = ${data};\nlet _ResPath = ${getRes};\nexport const Package = ${Package};\nexport const ResGet = new Proxy(_ResPath, {
+        content = `${StartContent}
+/** 资源路径 */
+export const ResPath = ${data};\n
+let _ResPath = ${getRes};\n
+/** 分包名字 */
+export const PackName = ${Package};\n
+/** 获取资源，未加载返回null */
+export const ResGet = new Proxy(_ResPath, {
     get: function (target, propKey, receiver) {
         let result = Laya.loader.getRes(ResPath[propKey])
         return result ? result : null

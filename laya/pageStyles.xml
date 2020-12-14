@@ -1,6 +1,6 @@
 <page>
    <item name="test.scene" props="" ifExport="内嵌模式" aName=""/>
-   <item name="View_Main.scene" props="" ifExport="内嵌模式" aName=""/>
+   <item name="View_Main.scene" props="" ifExport="分离模式" aName=""/>
    <item name="test/test2222.scene" props="" ifExport="内嵌模式" aName=""/>
    <item name="test/test3333.scene" props="" ifExport="分离模式" aName=""/>
    <item name="test/tets.scene" props="" ifExport="加载模式" aName=""/>

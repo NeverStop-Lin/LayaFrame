@@ -2,7 +2,7 @@
     "x":0,
     "type":"View",
     "selectedBox":2,
-    "selecteID":19,
+    "selecteID":18,
     "searchKey":"View",
     "props":{"width":1334,"top":0,"sceneColor":"#000000","right":0,"left":0,"height":750,"bottom":0},
     "nodeParent":-1,
@@ -17,10 +17,10 @@
         {
             "x":15,
             "type":"Image",
-            "searchKey":"Image,bg",
-            "props":{"var":"bg","top":0,"skin":"images/image_20.png","right":0,"left":0,"bottom":0},
+            "searchKey":"Image",
+            "props":{"top":0,"skin":"images/image_17.png","right":0,"left":0,"bottom":0},
             "nodeParent":2,
-            "label":"bg",
+            "label":"Image",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
@@ -35,14 +35,13 @@
             "props":{"var":"loading_bg","skin":"images/image_22.png","centerX":0,"bottom":156},
             "nodeParent":2,
             "label":"loading_bg",
-            "isOpen":true,
+            "isOpen":false,
             "isDirectory":true,
             "isAniNode":true,
             "hasChild":true,
             "compId":19,
             "child":[
                 {
-                    "x":30,
                     "type":"Image",
                     "searchKey":"Image,loading_line",
                     "props":{"x":14,"width":1030,"var":"loading_line","skin":"images/image_26.png","height":58,"centerY":0},
@@ -55,20 +54,6 @@
                     "child":[
                         ]
                 }]
-        },
-        {
-            "x":15,
-            "type":"Image",
-            "searchKey":"Image,logo",
-            "props":{"var":"logo","top":80,"skin":"images/image_11.png","centerX":0},
-            "nodeParent":2,
-            "label":"logo",
-            "isDirectory":false,
-            "isAniNode":true,
-            "hasChild":false,
-            "compId":21,
-            "child":[
-                ]
         }],
     "animations":[
         {

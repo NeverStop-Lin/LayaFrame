@@ -1,16 +1,17 @@
 import EventName from "../../ConfigFile/EventName"
-import { _LocalData } from "../../ConfigFile/LocalData"
+import LOCALDATA from "../../ConfigFile/LocalData"
 import EventControl from "./EventControl"
 let InitState = false
+/** 初始化本地存储 */
 export function _InitLocaData() {
     if (InitState) return
     InitState = true
-    if (Laya.LocalStorage.getJSON("version") != LocalData.version) {
-        for (const key in _LocalData) {
+    if (Laya.LocalStorage.getJSON("VERSION") != LocalData.VERSION) {
+        for (const key in LOCALDATA) {
             LocalData[key] = LocalData[key]
         }
     } else {
-        for (const key in _LocalData) {
+        for (const key in LOCALDATA) {
             let data = Laya.LocalStorage.getJSON(key)
             if (!data) {
                 LocalData[key] = LocalData[key]
@@ -20,16 +21,16 @@ export function _InitLocaData() {
         }
     }
 }
-let LocalData = new Proxy(_LocalData, {
+let LocalData = new Proxy(LOCALDATA, {
     get(target, key) {
         _InitLocaData()
-        EventControl.emit(EventName.GetLocalData, target, key)
+        EventControl.emit(EventName.Frame.GetLocalData, [key])
         return target[key];
     },
     set(target, key, value) {
         Reflect.set(target, key, value);
         Laya.LocalStorage.setJSON(key as string, target[key])
-        EventControl.emit(EventName.SetLocalData, target, key, value)
+        EventControl.emit(EventName.Frame.SetLocalData, [key, value])
         _InitLocaData()
         return true
     }

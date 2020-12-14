@@ -2,11 +2,11 @@
     "x":0,
     "type":"View",
     "selectedBox":2,
-    "selecteID":29,
+    "selecteID":74,
     "searchKey":"View",
     "props":{"x":0,"width":1334,"top":0,"sceneColor":"#000000","right":0,"left":0,"height":750,"bottom":0},
     "nodeParent":-1,
-    "maxID":69,
+    "maxID":75,
     "label":"View",
     "isOpen":true,
     "isDirectory":true,
@@ -30,299 +30,28 @@
         },
         {
             "x":15,
-            "type":"Box",
-            "searchKey":"Box,menu_view",
-            "props":{"var":"menu_view","top":0,"right":0,"left":0,"bottom":0},
-            "nodeParent":2,
-            "label":"menu_view",
-            "isOpen":true,
-            "isDirectory":true,
-            "isAniNode":true,
-            "hasChild":true,
-            "compId":24,
-            "child":[
-                {
-                    "x":30,
-                    "type":"Button",
-                    "searchKey":"Button,btn_setting",
-                    "props":{"width":60,"var":"btn_setting","top":20,"stateNum":"2","skin":"images/image_2.png","height":60,"centerX":-500},
-                    "nodeParent":24,
-                    "label":"btn_setting",
-                    "isDirectory":false,
-                    "isAniNode":true,
-                    "hasChild":false,
-                    "compId":25,
-                    "child":[
-                        ]
-                },
-                {
-                    "x":30,
-                    "type":"Image",
-                    "searchKey":"Image,btn_start",
-                    "props":{"var":"btn_start","skin":"images/image_4.png","right":150,"centerY":-190,"centerX":450},
-                    "nodeParent":24,
-                    "label":"btn_start",
-                    "isDirectory":false,
-                    "isAniNode":true,
-                    "hasChild":false,
-                    "compId":26,
-                    "child":[
-                        ]
-                },
-                {
-                    "x":30,
-                    "type":"Image",
-                    "searchKey":"Image,btn_level",
-                    "props":{"var":"btn_level","skin":"images/image_32.png","right":150,"centerY":13,"centerX":450},
-                    "nodeParent":24,
-                    "label":"btn_level",
-                    "isDirectory":false,
-                    "isAniNode":true,
-                    "hasChild":false,
-                    "compId":27,
-                    "child":[
-                        ]
-                },
-                {
-                    "x":30,
-                    "type":"Image",
-                    "searchKey":"Image,btn_more",
-                    "props":{"var":"btn_more","skin":"images/image_3.png","right":150,"centerY":218,"centerX":450},
-                    "nodeParent":24,
-                    "label":"btn_more",
-                    "isDirectory":false,
-                    "isAniNode":true,
-                    "hasChild":false,
-                    "compId":28,
-                    "child":[
-                        ]
-                }]
-        },
-        {
-            "x":15,
-            "type":"Box",
-            "searchKey":"Box,skin_view",
-            "props":{"width":727,"var":"skin_view","mouseEnabled":true,"left":100,"height":524,"centerY":14},
-            "nodeParent":2,
-            "label":"skin_view",
-            "isOpen":true,
-            "isDirectory":true,
-            "isAniNode":true,
-            "hasChild":true,
-            "compId":22,
-            "child":[
-                {
-                    "x":30,
-                    "type":"Image",
-                    "searchKey":"Image",
-                    "props":{"y":0,"x":94,"width":541,"top":0,"skin":"images/椭圆 1.png"},
-                    "nodeParent":22,
-                    "label":"Image",
-                    "isOpen":true,
-                    "isDirectory":true,
-                    "isAniNode":true,
-                    "hasChild":true,
-                    "compId":20,
-                    "child":[
-                        {
-                            "x":45,
-                            "type":"List",
-                            "searchKey":"List,SkinList",
-                            "props":{"y":33,"x":34,"width":475,"var":"SkinList","spaceX":100,"repeatY":1,"mouseEnabled":false,"height":345,"hScrollBarSkin":"comp/hscroll.png"},
-                            "nodeParent":20,
-                            "label":"SkinList",
-                            "isOpen":true,
-                            "isDirectory":true,
-                            "isAniNode":true,
-                            "hasChild":true,
-                            "compId":57,
-                            "child":[
-                                {
-                                    "x":60,
-                                    "type":"Box",
-                                    "searchKey":"Box",
-                                    "props":{"y":0,"x":0,"width":474,"renderType":"render","height":345},
-                                    "nodeParent":57,
-                                    "label":"Box",
-                                    "isOpen":true,
-                                    "isDirectory":true,
-                                    "isAniNode":false,
-                                    "hasChild":true,
-                                    "compId":58,
-                                    "child":[
-                                        {
-                                            "x":75,
-                                            "type":"Image",
-                                            "searchKey":"Image,CarImage",
-                                            "props":{"name":"CarImage","centerX":0,"bottom":20},
-                                            "nodeParent":58,
-                                            "label":"CarImage",
-                                            "isDirectory":false,
-                                            "isAniNode":false,
-                                            "hasChild":false,
-                                            "compId":59,
-                                            "child":[
-                                                ]
-                                        }]
-                                }]
-                        }]
-                },
-                {
-                    "x":30,
-                    "type":"Image",
-                    "searchKey":"Image,btn_skin_left",
-                    "props":{"x":27,"width":53,"var":"btn_skin_left","top":160,"skin":"images/image_12.png","pivotY":45,"pivotX":27,"height":89},
-                    "nodeParent":22,
-                    "label":"btn_skin_left",
-                    "isOpen":true,
-                    "isDirectory":false,
-                    "isAniNode":true,
-                    "hasChild":false,
-                    "compId":21,
-                    "child":[
-                        ]
-                },
-                {
-                    "x":30,
-                    "type":"Image",
-                    "searchKey":"Image,btn_skin_right",
-                    "props":{"x":696,"width":53,"var":"btn_skin_right","top":160,"skin":"images/image_12.png","rotation":180,"pivotY":45,"pivotX":27,"height":89},
-                    "nodeParent":22,
-                    "label":"btn_skin_right",
-                    "isDirectory":false,
-                    "isAniNode":true,
-                    "hasChild":false,
-                    "compId":23,
-                    "child":[
-                        ]
-                },
-                {
-                    "x":30,
-                    "type":"Image",
-                    "searchKey":"Image,btn_buy",
-                    "props":{"width":175,"var":"btn_buy","skin":"images/iamge_68.png","height":81,"centerX":170,"bottom":0},
-                    "nodeParent":22,
-                    "label":"btn_buy",
-                    "isOpen":true,
-                    "isDirectory":true,
-                    "isAniNode":true,
-                    "hasChild":true,
-                    "compId":52,
-                    "child":[
-                        {
-                            "x":45,
-                            "type":"Label",
-                            "searchKey":"Label",
-                            "props":{"y":6,"x":0,"valign":"middle","text":"购买","fontSize":35,"font":"SimHei","color":"#ffffff","centerX":0,"bold":true,"align":"center"},
-                            "nodeParent":52,
-                            "label":"Label",
-                            "isOpen":true,
-                            "isDirectory":false,
-                            "isAniNode":true,
-                            "hasChild":false,
-                            "compId":66,
-                            "child":[
-                                ]
-                        },
-                        {
-                            "x":45,
-                            "type":"Label",
-                            "searchKey":"Label,btn_buy_text",
-                            "props":{"y":42,"width":68,"var":"btn_buy_text","valign":"middle","text":"100","height":25,"fontSize":25,"font":"SimHei","color":"#ffffff","centerX":26,"bold":true,"align":"left"},
-                            "nodeParent":52,
-                            "label":"btn_buy_text",
-                            "isDirectory":false,
-                            "isAniNode":true,
-                            "hasChild":false,
-                            "compId":67,
-                            "child":[
-                                ]
-                        },
-                        {
-                            "x":45,
-                            "type":"Sprite",
-                            "searchKey":"Sprite",
-                            "props":{"y":42,"x":51.5,"width":25,"texture":"images/图层 263.png","height":25},
-                            "nodeParent":52,
-                            "label":"Sprite",
-                            "isDirectory":false,
-                            "isAniNode":true,
-                            "hasChild":false,
-                            "compId":68,
-                            "child":[
-                                ]
-                        }]
-                },
-                {
-                    "x":30,
-                    "type":"Image",
-                    "searchKey":"Image,btn_buy_video",
-                    "props":{"width":175,"visible":true,"var":"btn_buy_video","skin":"images/iamge_68.png","height":81,"centerX":-170,"bottom":0},
-                    "nodeParent":22,
-                    "label":"btn_buy_video",
-                    "isOpen":true,
-                    "isDirectory":true,
-                    "isAniNode":true,
-                    "hasChild":true,
-                    "compId":60,
-                    "child":[
-                        {
-                            "x":45,
-                            "type":"Label",
-                            "searchKey":"Label",
-                            "props":{"y":6,"valign":"middle","text":"解锁","fontSize":35,"font":"SimHei","color":"#ffffff","centerX":0,"bold":true,"align":"center"},
-                            "nodeParent":60,
-                            "label":"Label",
-                            "isOpen":true,
-                            "isDirectory":false,
-                            "isAniNode":true,
-                            "hasChild":false,
-                            "compId":61,
-                            "child":[
-                                ]
-                        },
-                        {
-                            "x":45,
-                            "type":"Label",
-                            "searchKey":"Label,btn_buy_video_text",
-                            "props":{"y":42,"var":"btn_buy_video_text","valign":"middle","text":"视频 0/10","fontSize":25,"font":"SimHei","color":"#ffffff","centerX":0,"bold":true,"align":"center"},
-                            "nodeParent":60,
-                            "label":"btn_buy_video_text",
-                            "isDirectory":false,
-                            "isAniNode":true,
-                            "hasChild":false,
-                            "compId":65,
-                            "child":[
-                                ]
-                        }],
-                    "$HIDDEN":false
-                }],
-            "$HIDDEN":false
-        },
-        {
-            "x":15,
             "type":"Image",
-            "searchKey":"Image",
-            "props":{"width":203,"top":20,"skin":"images/image_70.png","height":72,"centerX":-300},
+            "searchKey":"Image,start",
+            "props":{"width":307,"var":"start","skin":"images/image_6.png","height":135,"centerY":0,"centerX":0},
             "nodeParent":2,
-            "label":"Image",
+            "label":"start",
             "isOpen":true,
             "isDirectory":true,
             "isAniNode":true,
             "hasChild":true,
-            "compId":50,
+            "compId":70,
             "child":[
                 {
                     "x":30,
                     "type":"Label",
-                    "searchKey":"Label,coin_num",
-                    "props":{"y":18,"x":88,"width":99,"var":"coin_num","valign":"middle","text":"20","height":40,"fontSize":40,"font":"SimHei","color":"#ffffff","bold":true,"align":"left"},
-                    "nodeParent":50,
-                    "label":"coin_num",
+                    "searchKey":"Label",
+                    "props":{"y":0,"x":0,"text":"开 始","fontSize":70,"font":"SimHei","color":"#ffffff","centerY":0,"centerX":0,"bold":true},
+                    "nodeParent":70,
+                    "label":"Label",
                     "isDirectory":false,
                     "isAniNode":true,
                     "hasChild":false,
-                    "compId":51,
+                    "compId":74,
                     "child":[
                         ]
                 }]

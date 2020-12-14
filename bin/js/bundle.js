@@ -3,18 +3,14 @@
 
     class _EventName {
         constructor() {
-            this.SetLocalData = "SetLocalData";
-            this.GetLocalData = "GetLocalData";
-            this.ShowUI = "ShowUI";
-            this.HideUI = "HideUI";
-            this.RemoveUI = "RemoveUI";
-            this.Loading_progress = "Loading_progress";
-            this.DoorSwitch = "DoorSwitch";
-            this.Car_UP_Down = "Car_UP_Down";
-            this.Car_Accident = "Car_Accident";
-            this.Car_RedLight = "Car_RedLight";
-            this.Car_Archive = "Car_Archive";
-            this.GameOver = "GameOver";
+            this.Frame = {
+                SetLocalData: "SetLocalData",
+                GetLocalData: "GetLocalData",
+                ShowUI: "ShowUI",
+                HideUI: "HideUI",
+                RemoveUI: "RemoveUI",
+            };
+            this.Test = "Test";
         }
     }
     const EventName = new _EventName();
@@ -23,11 +19,11 @@
         constructor() {
             this.eventDispatcher = new Laya.EventDispatcher();
         }
-        emit(InName, ...agv) {
-            return this.eventDispatcher.event(InName, agv);
+        emit(InName, data = null) {
+            return this.eventDispatcher.event(InName, [data]);
         }
         on(InName, caller, listener, arg) {
-            this.eventDispatcher.on(InName, caller, listener, (arg == null) ? null : ([arg]));
+            this.eventDispatcher.on(InName, caller, listener, arg);
         }
         off(InName, caller, listener) {
             this.eventDispatcher.off(InName, caller, listener);
@@ -56,81 +52,17 @@
     }
     let Tools = new _Tools();
 
-    const ResPath = {
-        "刹车.mp3": "res/sounds/刹车.mp3",
-        "喇叭.mp3": "res/sounds/喇叭.mp3",
-        "引擎.mp3": "res/sounds/引擎.mp3",
-        "背景音乐2.mp3": "res/sounds/背景音乐2.mp3",
-        "SampleSceneGIReflection.ltcb.ls": "res/3DScene/LayaScene_SampleScene/Conventional/Assets/SampleSceneGIReflection.ltcb.ls",
-        "SampleScene.ls": "res/3DScene/LayaScene_SampleScene/Conventional/SampleScene.ls",
-        "Cube.lh": "res/3DScene/LayaScene_SampleScene/Conventional/Cube.lh",
-        "DirectionalLight.lh": "res/3DScene/LayaScene_SampleScene/Conventional/DirectionalLight.lh",
-        "lubiao.lh": "res/3DScene/LayaScene_SampleScene/Conventional/lubiao.lh",
-        "LV1.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV1.lh",
-        "LV10.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV10.lh",
-        "LV11.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV11.lh",
-        "LV12.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV12.lh",
-        "LV13.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV13.lh",
-        "LV14.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV14.lh",
-        "LV15.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV15.lh",
-        "LV16.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV16.lh",
-        "LV17.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV17.lh",
-        "LV18.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV18.lh",
-        "LV19.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV19.lh",
-        "LV2.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV2.lh",
-        "LV20.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV20.lh",
-        "LV21.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV21.lh",
-        "LV22.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV22.lh",
-        "LV23.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV23.lh",
-        "LV24.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV24.lh",
-        "LV25.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV25.lh",
-        "LV26.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV26.lh",
-        "LV27.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV27.lh",
-        "LV28.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV28.lh",
-        "LV29.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV29.lh",
-        "LV3.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV3.lh",
-        "LV30.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV30.lh",
-        "LV4.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV4.lh",
-        "LV5.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV5.lh",
-        "LV6.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV6.lh",
-        "LV7.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV7.lh",
-        "LV8.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV8.lh",
-        "LV9.lh": "res/3DScene/LayaScene_SampleScene/Conventional/LV9.lh",
-        "MainCamera.lh": "res/3DScene/LayaScene_SampleScene/Conventional/MainCamera.lh",
-        "MAP.lh": "res/3DScene/LayaScene_SampleScene/Conventional/MAP.lh",
-        "NPC1.lh": "res/3DScene/LayaScene_SampleScene/Conventional/NPC1.lh",
-        "NPC2.lh": "res/3DScene/LayaScene_SampleScene/Conventional/NPC2.lh",
-        "NPC3.lh": "res/3DScene/LayaScene_SampleScene/Conventional/NPC3.lh",
-        "SM_Prop_Barrier.lh": "res/3DScene/LayaScene_SampleScene/Conventional/SM_Prop_Barrier.lh",
-        "SM_Prop_LightPole_Arm.lh": "res/3DScene/LayaScene_SampleScene/Conventional/SM_Prop_LightPole_Arm.lh",
-        "SM_Prop_Sign_XXX.lh": "res/3DScene/LayaScene_SampleScene/Conventional/SM_Prop_Sign_XXX.lh",
-        "start.lh": "res/3DScene/LayaScene_SampleScene/Conventional/start.lh",
-        "xiaoche00.lh": "res/3DScene/LayaScene_SampleScene/Conventional/xiaoche00.lh",
-        "xiaoche1.lh": "res/3DScene/LayaScene_SampleScene/Conventional/xiaoche1.lh",
-        "xiaoche10.lh": "res/3DScene/LayaScene_SampleScene/Conventional/xiaoche10.lh",
-        "xiaoche2.lh": "res/3DScene/LayaScene_SampleScene/Conventional/xiaoche2.lh",
-        "xiaoche3.lh": "res/3DScene/LayaScene_SampleScene/Conventional/xiaoche3.lh",
-        "xiaoche4.lh": "res/3DScene/LayaScene_SampleScene/Conventional/xiaoche4.lh",
-        "xiaoche5.lh": "res/3DScene/LayaScene_SampleScene/Conventional/xiaoche5.lh",
-        "xiaoche6.lh": "res/3DScene/LayaScene_SampleScene/Conventional/xiaoche6.lh",
-        "xiaoche7.lh": "res/3DScene/LayaScene_SampleScene/Conventional/xiaoche7.lh",
-        "xiaoche8.lh": "res/3DScene/LayaScene_SampleScene/Conventional/xiaoche8.lh",
-        "xiaoche9.lh": "res/3DScene/LayaScene_SampleScene/Conventional/xiaoche9.lh",
-        "yingdao.lh": "res/3DScene/LayaScene_SampleScene/Conventional/yingdao.lh",
-        "zhangaiche1.lh": "res/3DScene/LayaScene_SampleScene/Conventional/zhangaiche1.lh",
-        "zhangaiche2.lh": "res/3DScene/LayaScene_SampleScene/Conventional/zhangaiche2.lh",
-        "zhangaiche3.lh": "res/3DScene/LayaScene_SampleScene/Conventional/zhangaiche3.lh"
-    };
-    let _ResPath = { "刹车.mp3": null, "喇叭.mp3": null, "引擎.mp3": null, "背景音乐2.mp3": null, "SampleSceneGIReflection.ltcb.ls": null, "SampleScene.ls": null, "Cube.lh": null, "DirectionalLight.lh": null, "lubiao.lh": null, "LV1.lh": null, "LV10.lh": null, "LV11.lh": null, "LV12.lh": null, "LV13.lh": null, "LV14.lh": null, "LV15.lh": null, "LV16.lh": null, "LV17.lh": null, "LV18.lh": null, "LV19.lh": null, "LV2.lh": null, "LV20.lh": null, "LV21.lh": null, "LV22.lh": null, "LV23.lh": null, "LV24.lh": null, "LV25.lh": null, "LV26.lh": null, "LV27.lh": null, "LV28.lh": null, "LV29.lh": null, "LV3.lh": null, "LV30.lh": null, "LV4.lh": null, "LV5.lh": null, "LV6.lh": null, "LV7.lh": null, "LV8.lh": null, "LV9.lh": null, "MainCamera.lh": null, "MAP.lh": null, "NPC1.lh": null, "NPC2.lh": null, "NPC3.lh": null, "SM_Prop_Barrier.lh": null, "SM_Prop_LightPole_Arm.lh": null, "SM_Prop_Sign_XXX.lh": null, "start.lh": null, "xiaoche00.lh": null, "xiaoche1.lh": null, "xiaoche10.lh": null, "xiaoche2.lh": null, "xiaoche3.lh": null, "xiaoche4.lh": null, "xiaoche5.lh": null, "xiaoche6.lh": null, "xiaoche7.lh": null, "xiaoche8.lh": null, "xiaoche9.lh": null, "yingdao.lh": null, "zhangaiche1.lh": null, "zhangaiche2.lh": null, "zhangaiche3.lh": null };
-    const Package = { "3DScene": "3DScene", "sounds": "sounds" };
+    const ResPath = {};
+    let _ResPath = {};
+    const PackName = { "3DScene": "3DScene" };
     const ResGet = new Proxy(_ResPath, {
         get: function (target, propKey, receiver) {
             let result = Laya.loader.getRes(ResPath[propKey]);
             return result ? result : null;
         }
     });
-    let VIEWJSONPATH = ["View_Game.json", "View_GameOver.json", "View_Loading.json", "View_SelectLevel.json", "View_Setting.json"];
-    class _LoadRes {
+    let VIEWJSONPATH = ["View_Game.json", "View_Loading.json", "View_Main.json"];
+    class _ResLoad {
         constructor() {
             this.PackageLoadNum = 0;
             this.GetResState = 0;
@@ -138,42 +70,50 @@
             this.IsInit = false;
         }
         init(ResFn, PackFn) {
-            if (LoadRes.IsInit === false) {
-                LoadRes.IsInit = true;
-                LoadRes.load(VIEWJSONPATH, LoadRes, null, null, 0);
+            if (ResControl.IsInit === false) {
+                ResControl.IsInit = true;
+                ResControl.load(VIEWJSONPATH, ResControl, null, null, 0);
                 for (let ResName in ResPath) {
                     if (typeof ResFn == "function") {
                         if (ResFn(ResPath[ResName]))
-                            LoadRes.ResList.push(ResPath[ResName]);
+                            ResControl.ResList.push(ResPath[ResName]);
                     }
                     else {
-                        LoadRes.ResList.push(ResPath[ResName]);
+                        ResControl.ResList.push(ResPath[ResName]);
                     }
                 }
                 let PackageNameArr = [];
-                for (let PackageName in Package) {
+                for (let PackageName in PackName) {
                     if (typeof PackFn == "function") {
-                        if (PackFn(Package[PackageName]))
-                            PackageNameArr.push(Package[PackageName]);
+                        if (PackFn(PackName[PackageName]))
+                            PackageNameArr.push(PackName[PackageName]);
                     }
                     else {
                         PackageNameArr.push(PackageName);
                     }
                 }
-                LoadRes.DownloadAllPackage(PackageNameArr);
+                ResControl.DownloadAllPackage(PackageNameArr);
             }
         }
         load(url = [], caller = null, complete = null, progress = null, priority = 1) {
+            if (!url)
+                url = [];
             Laya.loader.create(url, Laya.Handler.create(caller, complete), Laya.Handler.create(caller, progress), null, null, null, priority, true);
         }
-        loadPackage(name = [], caller = null, complete = () => { }, progress = () => { }) {
+        loadPackage(name = [], caller = null, complete, progress) {
+            if (!name)
+                name = [];
+            if (typeof complete != "function")
+                complete = () => { };
+            if (typeof progress != "function")
+                progress = () => { };
             complete = complete.bind(caller);
             progress = progress.bind(caller);
             let _index = 0;
             let _seccess = 0;
             let _progress = [];
             DownloadSubpackage();
-            Laya.timer.loop(100, LoadRes, AllLoadProgress);
+            Laya.timer.loop(100, ResControl, AllLoadProgress);
             function DownloadSubpackage() {
                 if (Tools.getPlatform == "wx") {
                     if (_index >= name.length) {
@@ -195,10 +135,10 @@
                             _progress[index] = 1;
                         }
                     });
-                    Laya.timer.loop(100, LoadRes, LoadProgress);
+                    Laya.timer.loop(100, ResControl, LoadProgress);
                     function LoadProgress() {
                         if (_progress[index] >= 0.95) {
-                            Laya.timer.clear(LoadRes, LoadProgress);
+                            Laya.timer.clear(ResControl, LoadProgress);
                         }
                         else if (_progress[index] >= 0.75) {
                             _progress[index] += 0.005;
@@ -218,10 +158,10 @@
                     _progress[index] = 0;
                     _seccess++;
                     _progress[index] = 1;
-                    Laya.timer.loop(100, LoadRes, LoadProgress);
+                    Laya.timer.loop(100, ResControl, LoadProgress);
                     function LoadProgress() {
                         if (_progress[index] >= 0.95) {
-                            Laya.timer.clear(LoadRes, LoadProgress);
+                            Laya.timer.clear(ResControl, LoadProgress);
                         }
                         else if (_progress[index] >= 0.75) {
                             _progress[index] += 0.005;
@@ -243,50 +183,51 @@
                 progress(All_progress);
                 if (All_progress >= 1) {
                     complete(_seccess == name.length);
-                    Laya.timer.clear(LoadRes, AllLoadProgress);
+                    Laya.timer.clear(ResControl, AllLoadProgress);
                 }
             }
         }
         DownloadAllPackage(PackageNameArr = []) {
             if (PackageNameArr.length >= 1) {
-                LoadRes.loadPackage(PackageNameArr, LoadRes, (res) => {
-                    LoadRes.LoadRes();
+                ResControl.loadPackage(PackageNameArr, ResControl, (res) => {
+                    ResControl.ResAutoLoad();
                 }, (res) => {
-                    LoadRes.PackageLoadNum = res;
+                    ResControl.PackageLoadNum = res;
                 });
             }
             else {
-                LoadRes.PackageLoadNum = 1;
-                LoadRes.LoadRes();
+                ResControl.PackageLoadNum = 1;
+                ResControl.ResAutoLoad();
             }
         }
-        LoadRes() {
+        ResAutoLoad() {
             let indexNum = 0;
             load();
             function load() {
-                if (LoadRes.ResList.length <= indexNum) {
+                if (ResControl.ResList.length <= indexNum) {
                     return;
                 }
-                if (LoadRes.GetResState) {
-                    Laya.timer.frameOnce(100, LoadRes, load);
+                if (ResControl.GetResState) {
+                    Laya.timer.frameOnce(100, ResControl, load);
                 }
-                else if (Laya.loader.getRes(LoadRes.ResList[indexNum])) {
+                else if (Laya.loader.getRes(ResControl.ResList[indexNum])) {
                     indexNum++;
-                    Laya.timer.frameOnce(100, LoadRes, load);
+                    Laya.timer.frameOnce(100, ResControl, load);
                 }
                 else {
-                    LoadRes.load([LoadRes.ResList[indexNum]], LoadRes, (res) => {
+                    ResControl.load([ResControl.ResList[indexNum]], ResControl, (res) => {
                         indexNum++;
-                        Laya.timer.frameOnce(100, LoadRes, load);
+                        Laya.timer.frameOnce(100, ResControl, load);
                     }, null, 4);
                 }
             }
         }
         ResState(resurlarr, caller, callback) {
+            if (!resurlarr)
+                resurlarr = [];
             if (caller)
                 callback = callback.bind(caller);
-            LoadRes.init();
-            LoadRes.GetResState++;
+            ResControl.GetResState++;
             let noLoadList = [];
             let noLoadListProgress = 0;
             resurlarr.forEach(item => {
@@ -295,38 +236,91 @@
                     noLoadList.push(item);
                 }
             });
-            let progress = 1 - LoadRes.PackageLoadNum + 1 - noLoadListProgress;
-            Laya.timer.frameLoop(1, LoadRes, load);
+            let progress = 1 - ResControl.PackageLoadNum + 1 - noLoadListProgress;
+            Laya.timer.frameLoop(1, ResControl, load);
             function load() {
-                if (LoadRes.PackageLoadNum >= 1 && noLoadList.length > 0) {
-                    Laya.timer.clear(LoadRes, load);
-                    LoadRes.load(noLoadList, LoadRes, (res) => {
+                if (ResControl.PackageLoadNum >= 1 && noLoadList.length > 0) {
+                    Laya.timer.clear(ResControl, load);
+                    ResControl.load(noLoadList, ResControl, (res) => {
                     }, (res) => {
                         noLoadListProgress = res;
                     }, 1);
                 }
                 else if (noLoadList.length == 0) {
                     noLoadListProgress = 1;
-                    Laya.timer.clear(LoadRes, load);
+                    Laya.timer.clear(ResControl, load);
                 }
             }
-            Laya.timer.frameLoop(1, LoadRes, result);
+            Laya.timer.frameLoop(1, ResControl, result);
             function result() {
-                let _progress = 1 - (1 - LoadRes.PackageLoadNum + 1 - noLoadListProgress) / progress;
+                let _progress = 1 - (1 - ResControl.PackageLoadNum + 1 - noLoadListProgress) / progress;
                 if (_progress >= 1) {
-                    LoadRes.GetResState--;
-                    Laya.timer.clear(LoadRes, result);
+                    ResControl.GetResState--;
+                    Laya.timer.clear(ResControl, result);
                 }
-                callback(_progress);
+                if (typeof callback == "function") {
+                    callback(_progress);
+                }
             }
         }
     }
-    let LoadRes = new _LoadRes();
+    let ResControl = new _ResLoad();
+
+    var _LocalData = {
+        VERSION: 2,
+        Test: {
+            name: "王二狗",
+            age: 3,
+            merit: ["能吃", "能喝", "能睡"]
+        }
+    };
+
+    let InitState = false;
+    function _InitLocaData() {
+        if (InitState)
+            return;
+        InitState = true;
+        if (Laya.LocalStorage.getJSON("VERSION") != LocalData.VERSION) {
+            for (const key in _LocalData) {
+                LocalData[key] = LocalData[key];
+            }
+        }
+        else {
+            for (const key in _LocalData) {
+                let data = Laya.LocalStorage.getJSON(key);
+                if (!data) {
+                    LocalData[key] = LocalData[key];
+                }
+                else {
+                    LocalData[key] = data;
+                }
+            }
+        }
+    }
+    let LocalData = new Proxy(_LocalData, {
+        get(target, key) {
+            _InitLocaData();
+            EventControl$1.emit(EventName.Frame.GetLocalData, [key]);
+            return target[key];
+        },
+        set(target, key, value) {
+            Reflect.set(target, key, value);
+            Laya.LocalStorage.setJSON(key, target[key]);
+            EventControl$1.emit(EventName.Frame.SetLocalData, [key, value]);
+            _InitLocaData();
+            return true;
+        }
+    });
 
     class Ready {
         constructor() {
-            LoadRes.init();
-            EventControl$1.on(EventName.ShowUI, this, LoadRes.init);
+            Laya.SoundManager.autoStopMusic = false;
+            EventControl$1.on(EventName.Frame.ShowUI, this, ResControl.init);
+            _InitLocaData();
+            if (Tools.getPlatform == "wx") {
+                var data = { withShareTicket: true };
+                wx.showShareMenu(data);
+            }
         }
     }
 
@@ -345,8 +339,9 @@
         ShowUI(_class, data) {
             let _index = UIControl.GetUIIndexFromViews(_class.NAME);
             let _view = UIControl.Views[_index];
+            _class.DATA = data;
             if (!_view) {
-                _view = new _class();
+                _view = new _class(data);
                 UIControl.Views.push(_view);
             }
             _view.name = _class.NAME;
@@ -356,7 +351,7 @@
             if (_class.AUTO) {
                 _view.addComponent(AutoPage);
             }
-            EventControl$1.emit(EventName.ShowUI, _view.name);
+            EventControl$1.emit(EventName.Frame.ShowUI, _view.name);
             return _view;
         }
         HideUI(_class) {
@@ -366,19 +361,35 @@
                 Laya.stage.removeChild(_view);
                 _view.visible = false;
                 _view.active = false;
-                EventControl$1.emit(EventName.HideUI, _view.name);
+                EventControl$1.emit(EventName.Frame.HideUI, _view.name);
             }
         }
         RemoveUI(_class) {
             let _index = UIControl.GetUIIndexFromViews(_class.NAME);
             let _view = UIControl.Views[_index];
             if (_view) {
-                UIControl.Views.splice(_index, 1);
                 Laya.stage.removeChild(_view);
-                Laya.timer.frameOnce(3, null, () => {
+                _view.visible = false;
+                _view.active = false;
+                _class.DATA = null;
+                Laya.timer.clearAll(_view);
+                Laya.stage.offAllCaller(_view);
+                EventControl$1.offAll(_view);
+                UIControl.Views.splice(_index, 1);
+                Laya.timer.frameOnce(10, null, () => {
                     _view.destroy();
-                    EventControl$1.emit(EventName.RemoveUI, _view.name);
+                    EventControl$1.emit(EventName.Frame.RemoveUI, _view.name);
                 });
+            }
+        }
+        GetUI(_name) {
+            let _index = UIControl.GetUIIndexFromViews(_name.name);
+            let _view = UIControl.Views[_index];
+            if (_view) {
+                return _view;
+            }
+            else {
+                return null;
             }
         }
         GetUIIndexFromViews(_names) {
@@ -402,15 +413,6 @@
         }
         ui.View_GameUI = View_GameUI;
         REG("ui.View_GameUI", View_GameUI);
-        class View_GameOverUI extends View {
-            constructor() { super(); }
-            createChildren() {
-                super.createChildren();
-                this.loadScene("View_GameOver");
-            }
-        }
-        ui.View_GameOverUI = View_GameOverUI;
-        REG("ui.View_GameOverUI", View_GameOverUI);
         class View_LoadingUI extends View {
             constructor() { super(); }
             createChildren() {
@@ -421,172 +423,55 @@
         ui.View_LoadingUI = View_LoadingUI;
         REG("ui.View_LoadingUI", View_LoadingUI);
         class View_MainUI extends View {
-            constructor() {
-                super();
-            }
+            constructor() { super(); }
             createChildren() {
                 super.createChildren();
-                this.createView(View_MainUI.uiView);
+                this.loadScene("View_Main");
             }
         }
-        View_MainUI.uiView = { "type": "View", "props": { "x": 0, "width": 1334, "top": 0, "right": 0, "left": 0, "height": 750, "bottom": 0 }, "compId": 2, "child": [{ "type": "Image", "props": { "top": 0, "skin": "images/image_16.png", "right": 0, "left": 0, "bottom": 0 }, "compId": 29 }, { "type": "Box", "props": { "var": "menu_view", "top": 0, "right": 0, "left": 0, "bottom": 0 }, "compId": 24, "child": [{ "type": "Button", "props": { "width": 60, "var": "btn_setting", "top": 20, "stateNum": 2, "skin": "images/image_2.png", "height": 60, "centerX": -500 }, "compId": 25 }, { "type": "Image", "props": { "var": "btn_start", "skin": "images/image_4.png", "right": 150, "centerY": -190, "centerX": 450 }, "compId": 26 }, { "type": "Image", "props": { "var": "btn_level", "skin": "images/image_32.png", "right": 150, "centerY": 13, "centerX": 450 }, "compId": 27 }, { "type": "Image", "props": { "var": "btn_more", "skin": "images/image_3.png", "right": 150, "centerY": 218, "centerX": 450 }, "compId": 28 }] }, { "type": "Box", "props": { "width": 727, "var": "skin_view", "mouseEnabled": true, "left": 100, "height": 524, "centerY": 14 }, "compId": 22, "child": [{ "type": "Image", "props": { "y": 0, "x": 94, "width": 541, "top": 0, "skin": "images/椭圆 1.png" }, "compId": 20, "child": [{ "type": "List", "props": { "y": 33, "x": 34, "width": 475, "var": "SkinList", "spaceX": 100, "repeatY": 1, "mouseEnabled": false, "height": 345, "hScrollBarSkin": "comp/hscroll.png" }, "compId": 57, "child": [{ "type": "Box", "props": { "y": 0, "x": 0, "width": 474, "renderType": "render", "height": 345 }, "compId": 58, "child": [{ "type": "Image", "props": { "name": "CarImage", "centerX": 0, "bottom": 20 }, "compId": 59 }] }] }] }, { "type": "Image", "props": { "x": 27, "width": 53, "var": "btn_skin_left", "top": 160, "skin": "images/image_12.png", "pivotY": 45, "pivotX": 27, "height": 89 }, "compId": 21 }, { "type": "Image", "props": { "x": 696, "width": 53, "var": "btn_skin_right", "top": 160, "skin": "images/image_12.png", "rotation": 180, "pivotY": 45, "pivotX": 27, "height": 89 }, "compId": 23 }, { "type": "Image", "props": { "width": 175, "var": "btn_buy", "skin": "images/iamge_68.png", "height": 81, "centerX": 170, "bottom": 0 }, "compId": 52, "child": [{ "type": "Label", "props": { "y": 6, "x": 0, "valign": "middle", "text": "购买", "fontSize": 35, "font": "SimHei", "color": "#ffffff", "centerX": 0, "bold": true, "align": "center" }, "compId": 66 }, { "type": "Label", "props": { "y": 42, "width": 68, "var": "btn_buy_text", "valign": "middle", "text": "100", "height": 25, "fontSize": 25, "font": "SimHei", "color": "#ffffff", "centerX": 26, "bold": true, "align": "left" }, "compId": 67 }, { "type": "Sprite", "props": { "y": 42, "x": 51.5, "width": 25, "texture": "images/图层 263.png", "height": 25 }, "compId": 68 }] }, { "type": "Image", "props": { "width": 175, "visible": true, "var": "btn_buy_video", "skin": "images/iamge_68.png", "height": 81, "centerX": -170, "bottom": 0 }, "compId": 60, "child": [{ "type": "Label", "props": { "y": 6, "valign": "middle", "text": "解锁", "fontSize": 35, "font": "SimHei", "color": "#ffffff", "centerX": 0, "bold": true, "align": "center" }, "compId": 61 }, { "type": "Label", "props": { "y": 42, "var": "btn_buy_video_text", "valign": "middle", "text": "视频 0/10", "fontSize": 25, "font": "SimHei", "color": "#ffffff", "centerX": 0, "bold": true, "align": "center" }, "compId": 65 }] }] }, { "type": "Image", "props": { "width": 203, "top": 20, "skin": "images/image_70.png", "height": 72, "centerX": -300 }, "compId": 50, "child": [{ "type": "Label", "props": { "y": 18, "x": 88, "width": 99, "var": "coin_num", "valign": "middle", "text": "20", "height": 40, "fontSize": 40, "font": "SimHei", "color": "#ffffff", "bold": true, "align": "left" }, "compId": 51 }] }], "animations": [{ "nodes": [{ "target": 27, "keyframes": { "x": [{ "value": 987, "tweenMethod": "linearNone", "tween": true, "target": 27, "key": "x", "index": 0 }], "rotation": [{ "value": 0, "tweenMethod": "linearNone", "tween": true, "target": 27, "key": "rotation", "index": 0 }, { "value": 360, "tweenMethod": "linearNone", "tween": true, "target": 27, "key": "rotation", "index": 60 }] } }], "name": "ani1", "id": 1, "frameRate": 60, "action": 2 }], "loadList": ["images/image_16.png", "images/image_2.png", "images/image_4.png", "images/image_32.png", "images/image_3.png", "images/椭圆 1.png", "comp/hscroll.png", "images/image_12.png", "images/iamge_68.png", "images/图层 263.png", "images/image_70.png"], "loadList3D": [] };
         ui.View_MainUI = View_MainUI;
         REG("ui.View_MainUI", View_MainUI);
-        class View_SelectLevelUI extends View {
-            constructor() { super(); }
-            createChildren() {
-                super.createChildren();
-                this.loadScene("View_SelectLevel");
-            }
-        }
-        ui.View_SelectLevelUI = View_SelectLevelUI;
-        REG("ui.View_SelectLevelUI", View_SelectLevelUI);
-        class View_SettingUI extends View {
-            constructor() { super(); }
-            createChildren() {
-                super.createChildren();
-                this.loadScene("View_Setting");
-            }
-        }
-        ui.View_SettingUI = View_SettingUI;
-        REG("ui.View_SettingUI", View_SettingUI);
     })(ui || (ui = {}));
-
-    class CameraFollow extends Laya.Script3D {
-        constructor() {
-            super(...arguments);
-            this.speedPos = 0.95;
-            this.speedRot = 0.95;
-        }
-        onEnable() {
-            this.Camera = this.owner;
-        }
-        setFollow(nodePos, nodeRot, speedPos = 0.95, speedRot = 0.95) {
-            this.rot = nodeRot.transform.position;
-            this.nodePos = nodePos;
-            this.nodeRot = nodeRot;
-            this.speedPos = speedPos;
-            this.speedRot = speedRot;
-        }
-        onLateUpdate() {
-            this.startFollow();
-        }
-        startFollow() {
-            if (this.nodePos && this.nodePos) {
-                let pos = this.slowAction(this.nodePos.transform.position, this.Camera.transform.position, this.speedPos);
-                this.rot = this.slowAction(this.nodeRot.transform.position, this.rot, this.speedRot);
-                this.Camera.transform.lookAt(this.rot, new Laya.Vector3(0, 1, 0));
-                this.Camera.transform.position = pos;
-            }
-        }
-        slowAction(Cube, Camera, speed) {
-            let v3 = new Laya.Vector3();
-            let offX = Camera.x - Cube.x;
-            let offY = Camera.y - Cube.y;
-            let offZ = Camera.z - Cube.z;
-            v3.x = Cube.x + offX * speed;
-            v3.y = Cube.y + offY * speed;
-            v3.z = Cube.z + offZ * speed;
-            return v3;
-        }
-    }
-
-    class _Scenes3DControl {
-        constructor() {
-            this.NPC1 = null;
-            this.NPC2 = null;
-            this.NPC3 = null;
-            this.zhangaiche1 = null;
-            this.zhangaiche2 = null;
-            this.zhangaiche3 = null;
-        }
-        ;
-        init() {
-            let ResData = [
-                ResPath["SampleScene.ls"],
-                ResPath["MAP.lh"],
-                ResPath["MainCamera.lh"],
-                ResPath["DirectionalLight.lh"],
-                ResPath["NPC1.lh"],
-                ResPath["NPC2.lh"],
-                ResPath["NPC3.lh"],
-                ResPath["zhangaiche1.lh"],
-                ResPath["zhangaiche2.lh"],
-                ResPath["zhangaiche3.lh"],
-                ResPath["背景音乐2.mp3"],
-                ResPath["引擎.mp3"],
-                ResPath["喇叭.mp3"],
-                ResPath["刹车.mp3"],
-                ResPath["Cube.lh"]
-            ];
-            LoadRes.ResState(ResData, this, this.addNode);
-        }
-        addNode(res) {
-            if (res != 1)
-                return;
-            this.Scene3D = Laya.stage.addChild(ResGet["SampleScene.ls"]);
-            this.DirectionalLight = this.Scene3D.addChild(ResGet["DirectionalLight.lh"]);
-            this.MainCamera = this.Scene3D.addChild(ResGet["MainCamera.lh"]);
-            this.MAP = this.Scene3D.addChild(ResGet["MAP.lh"]);
-            this.Scene3D.addChild(ResGet["Cube.lh"]);
-            this.NPC1 = this.Scene3D.addChild(ResGet["NPC1.lh"]);
-            this.NPC2 = this.Scene3D.addChild(ResGet["NPC2.lh"]);
-            this.NPC3 = this.Scene3D.addChild(ResGet["NPC3.lh"]);
-            this.zhangaiche1 = ResGet["zhangaiche1.lh"];
-            this.zhangaiche2 = ResGet["zhangaiche2.lh"];
-            this.zhangaiche3 = ResGet["zhangaiche3.lh"];
-            this.Scene3D.zOrder = -1;
-            this.MainCamera.enableHDR = false;
-            this.MainCamera.addComponent(CameraFollow);
-        }
-    }
-    const Scenes3DControl = new _Scenes3DControl();
-
-    class View_Game extends ui.View_GameUI {
-        constructor() {
-            super(...arguments);
-            this.test_text = "View_Game";
-        }
-        onAwake() {
-            console.log("222=====>", this.test_text);
-        }
-    }
-    View_Game.NAME = "View_Game";
-    View_Game.AUTO = true;
 
     class View_Main extends ui.View_MainUI {
         constructor() {
-            super(...arguments);
-            this.test_text = "View_Main";
-        }
-        onAwake() {
-            Scenes3DControl.init();
-            console.log("222=======>", this.test_text);
-            Laya.stage.once(Laya.Event.CLICK, this, () => {
-                let _View_Game = UIControl.ShowUI(View_Game);
-                console.log("111=======>", _View_Game.test_text);
-                _View_Game.test_text = "Engine.ts";
-            });
+            super();
+            console.log(View_Main.DATA);
         }
     }
     View_Main.NAME = "View_Main";
     View_Main.AUTO = true;
+    View_Main.DATA = null;
 
     class Engine extends Ready {
         constructor() {
             super();
-            EventControl$1.on(EventName.ShowUI, this, (name) => {
-                console.log("显示页面：", name);
+            EventControl$1.on(EventName.Test, this, Test);
+            EventControl$1.emit(EventName.Test, "测试触发Test事件并传参");
+            function Test(data) {
+                console.log("Test事件被触发，参数：", data);
+                EventControl$1.off(EventName, this, Test);
+            }
+            ResControl.init();
+            ResControl.ResState([ResPath["Cube.lh"]], this, (progress) => {
+                console.log("加载进度:", progress);
+                if (progress == 1) {
+                    console.log("加载完成：", ResGet["Cube.lh"]);
+                }
             });
-            EventControl$1.on(EventName.HideUI, this, (name) => {
-                console.log("隐藏页面：", name);
-            });
-            EventControl$1.on(EventName.RemoveUI, this, (name) => {
-                console.log("关闭页面：", name);
-            });
-            let _View_Main = UIControl.ShowUI(View_Main);
-            console.log("111=======>", _View_Main.test_text);
-            _View_Main.test_text = "Engine.ts";
+            ResControl.load(null, null, null, null, null);
+            ResControl.loadPackage(null, null, null, null);
+            ResGet;
+            ResPath;
+            LocalData.Test.name;
+            LocalData.Test.age = 4;
+            LocalData.Test.merit[0];
+            LocalData.Test = LocalData.Test;
+            let _View_Main = UIControl.ShowUI(View_Main, "测试打开界面并传参");
+            UIControl.HideUI(View_Main);
+            UIControl.RemoveUI(View_Main);
+            UIControl.ShowUI(View_Main);
+            UIControl.GetUI(View_Main);
         }
     }
 
@@ -603,7 +488,7 @@
     GameConfig.screenMode = "horizontal";
     GameConfig.alignV = "middle";
     GameConfig.alignH = "center";
-    GameConfig.startScene = "View_Main.scene";
+    GameConfig.startScene = "View_Game.scene";
     GameConfig.sceneRoot = "";
     GameConfig.debug = false;
     GameConfig.stat = false;
