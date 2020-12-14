@@ -1,5 +1,5 @@
 
-class $kcr_UtilTool {
+class UtilTool {
 
 
     /**角度转弧度 默认角度转弧度
@@ -262,5 +262,5 @@ class $kcr_UtilTool {
 
 }
 
-let Tools_3dmath: $kcr_UtilTool = new $kcr_UtilTool()
+let Tools_3dmath: UtilTool = new UtilTool()
 export default Tools_3dmath

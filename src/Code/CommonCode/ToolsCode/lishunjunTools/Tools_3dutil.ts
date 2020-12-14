@@ -1,6 +1,6 @@
 import TweenAll from "../../Component/Game/Tween3D/TweenAll";
 
-class $kcr_UtilTool {
+class UtilTool {
 
     public debug: boolean = true;
     public get isMobil(): boolean {
@@ -547,5 +547,5 @@ class $kcr_UtilTool {
 
 }
 
-let Tools_3dutil: $kcr_UtilTool = new $kcr_UtilTool()
+let Tools_3dutil: UtilTool = new UtilTool()
 export default Tools_3dutil

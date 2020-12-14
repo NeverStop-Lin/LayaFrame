@@ -1,15 +1,15 @@
 
 
 
-export default class $kcr_WaterRipple extends Laya.Script3D {
+export default class WaterRipple extends Laya.Script3D {
     onInit() {
 
     }
-    static self: $kcr_WaterRipple = null;
+    static self: WaterRipple = null;
 
     constructor() {
         super();
-        $kcr_WaterRipple.self = this;
+        WaterRipple.self = this;
     }
 
     updateT = 0;

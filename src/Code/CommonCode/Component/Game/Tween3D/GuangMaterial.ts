@@ -1,18 +1,18 @@
-export default class $kcr_GuangMaterial extends Laya.Material{
-    constructor(){
+export default class GuangMaterial extends Laya.Material {
+    constructor() {
         super();
         this.setShaderName("ShaderGuang");
     }
     //漫反射贴图的存取函数
-    get diffuseTexture(){
-        return this._shaderValues.getTexture($kcr_GuangMaterial.DIFFUSETEXTURE);
+    get diffuseTexture() {
+        return this._shaderValues.getTexture(GuangMaterial.DIFFUSETEXTURE);
     }
-    set diffuseTexture(value){
-        this._shaderValues.setTexture($kcr_GuangMaterial.DIFFUSETEXTURE, value);
+    set diffuseTexture(value) {
+        this._shaderValues.setTexture(GuangMaterial.DIFFUSETEXTURE, value);
     }
     //设置marginalColor（边缘光照颜色）
-    set marginalColor(value){
-        this._shaderValues.setVector($kcr_GuangMaterial.MARGINALCOLOR, value);
+    set marginalColor(value) {
+        this._shaderValues.setVector(GuangMaterial.MARGINALCOLOR, value);
     }
 
     static DIFFUSETEXTURE = Laya.Shader3D.propertyNameToID("u_texture");
